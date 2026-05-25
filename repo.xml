@@ -16,7 +16,7 @@
       <title lang="EN">MusicD</title>
       <desc lang="EN">A modern themed Material Skin for Lyrion Music Server. can be used with LyrPlay iOS app.</desc>
       <changes lang="EN">Dark theme with brass accent colours, minor tweaks. more to come.</changes>
-      <link> https://github.com/meltface-80/MusicD-LMS-Skin</link>
+      <link>https://github.com/meltface-80/MusicD-Meets-Material-Skin</link>
     </plugin>
   </plugins>
 </extensions>
