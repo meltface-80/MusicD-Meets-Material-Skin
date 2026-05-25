@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" width="900" height="280" role="img" aria-label="MusicD meets Material">
+  <defs>
+    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e7cd9a"/>
+      <stop offset="0.5" stop-color="#c9a36a"/>
+      <stop offset="1" stop-color="#9c7c45"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="32%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#c9a36a" stop-opacity="0.16"/>
+      <stop offset="0.6" stop-color="#c9a36a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- panel -->
+  <rect x="2" y="2" width="896" height="276" rx="22" fill="#0c0c0e"/>
+  <rect x="2" y="2" width="896" height="276" rx="22" fill="url(#glow)"/>
+  <rect x="2.5" y="2.5" width="895" height="275" rx="21.5" fill="none" stroke="#c9a36a" stroke-opacity="0.22" stroke-width="1.5"/>
+
+  <!-- equalizer mark -->
+  <g transform="translate(70,95)" fill="url(#brass)">
+    <rect x="0"   y="34" width="9" height="26" rx="2"/>
+    <rect x="16"  y="18" width="9" height="42" rx="2"/>
+    <rect x="32"  y="0"  width="9" height="60" rx="2"/>
+    <rect x="48"  y="22" width="9" height="38" rx="2"/>
+    <rect x="64"  y="8"  width="9" height="52" rx="2"/>
+    <rect x="80"  y="40" width="9" height="20" rx="2"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="190" y="138" font-family="'Fraunces','Playfair Display','Georgia',serif" font-size="92" font-weight="700" fill="url(#brass)" letter-spacing="-1">MusicD</text>
+
+  <!-- subtitle -->
+  <text x="192" y="188" font-family="'Manrope','Helvetica Neue',Arial,sans-serif" font-size="27" font-weight="600" fill="#e9e2d4" letter-spacing="7">MEETS&#160;&#160;MATERIAL</text>
+
+  <!-- thin rule + tag -->
+  <rect x="194" y="212" width="300" height="2" rx="1" fill="#c9a36a" fill-opacity="0.5"/>
+  <text x="194" y="240" font-family="'Manrope','Helvetica Neue',Arial,sans-serif" font-size="15" font-weight="500" fill="#8a8780" letter-spacing="2">A DARK, EDITORIAL SKIN FOR LYRION MUSIC SERVER</text>
+</svg>
