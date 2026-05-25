@@ -6,7 +6,7 @@
   A dark, editorial reskin of <a href="https://github.com/CDrummond/lms-material">LMS&nbsp;Material</a> for the Lyrion Music Server &mdash; brass on near-black, built for late-night listening.
 </p>
 
-<p align="center"><b>Version 1.0.4<b>b></p>
+<p align="center"><b>Version 1.0.4</b>b></p>
 
 -----
 
