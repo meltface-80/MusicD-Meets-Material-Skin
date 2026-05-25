@@ -4,7 +4,7 @@
     <title lang="EN">MusicD Repository</title>
   </details>
   <plugins>
-    <plugin name="MaterialSkin"
+    <plugin name="MusicDMeetsMaterialSkin"
             version="1.0.0"
             minTarget="8.0"
             maxTarget="*"
