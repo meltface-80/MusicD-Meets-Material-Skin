@@ -8,6 +8,7 @@
 
 <p align="center"><b>Version 1.0.7</b></p>
 `https://github.com/meltface-80/MusicD-Meets-Material-Skin/releases/latest`
+
 -----
 
 ## What it is
