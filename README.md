@@ -1,6 +1,6 @@
-<p align="center">
-  <img src="musicd-meets-material-logo.svg" alt="MusicD meets Material" width="660">
-</p>
+<div align="center">
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/fc1dd26e-db7f-4e27-8f66-b0ab74db89e3" />
 
 <p align="center">
   A dark, editorial reskin of <a href="https://github.com/CDrummond/lms-material">LMS&nbsp;Material</a> for the Lyrion Music Server &mdash; brass on near-black, built for late-night listening.
