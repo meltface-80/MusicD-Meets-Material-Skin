@@ -1,0 +1,245 @@
+<!--
+ * LMS-Material
+ *
+ * Copyright (c) 2018-2026 Craig Drummond <craig.p.drummond@gmail.com>
+ * MIT license.
+-->
+
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui, interactive-widget=resizes-content">
+  <link href="html/font/font.css?r=202512" rel="stylesheet">
+  <link href="html/css/lib.min.css?r=6.4.2" rel="stylesheet">
+  [% PERL %]
+  my $version=Plugins::MaterialSkin::Plugin->getPluginVersion();
+  my $windowTitle=Plugins::MaterialSkin::Plugin->getWindowTitle();
+  my $ua=$stash->get("userAgent");
+  my $query=$stash->get("url_query");
+  my $theme='dark';
+  my $themeColor='0d0d0f';
+  my $mobile=index($ua, 'Android') != -1 || index($ua, 'iPad') != -1 || index($ua, 'iPhone') != -1 || index($ua, 'SafariViewService') != -1 || index($ua, 'MobileSafari') != -1 || (index($ua, 'Macintosh') != -1 && index($ua, '(KHTML, like Gecko) Version') != -1) ? 1 : 0;
+  # Now check to see if defaultTheme or themeColor were specified in URL
+  my $start = index($query, 'defaultTheme=');
+  if ($start!=-1) {
+    $start += 13;
+    my $end = index($query, "&", $start);
+    if ($end!=-1) {
+      $theme = substr($query, $start, $end-$start);
+    } else {
+      $theme = substr($query, $start);
+    }
+  }
+  $start = index($query, 'themeColor=');
+  if ($start!=-1) {
+    $start += 11;
+    my $end = index($query, "&", $start);
+    if ($end!=-1) {
+      $themeColor = substr($query, $start, $end-$start);
+    } else {
+      $themeColor = substr($query, $start);
+    }
+  }
+  print("  <link href=\"html/css/themes/${theme}.min.css?r=$version\" rel=\"stylesheet\" id=\"themecss\" onerror=\"setTheme('dark')\">\n");
+  print("  <link href=\"html/css/colors/musicd.min.css?r=$version\" rel=\"stylesheet\" id=\"colorcss\">\n");
+  print("  <link href=\"html/css/style.min.css?r=$version\" rel=\"stylesheet\">\n");
+  print("  <link href=\"html/css/mobile.min.css?r=$version\" rel=\"stylesheet\" id=\"layoutcss\">\n");
+  if ($mobile == 1) {
+    print("  <link href=\"html/css/other/mobile-scroll.min.css?r=$version\" rel=\"stylesheet\" id=\"scrollcss\">\n");
+  }
+  print("  <link href=\"html/css/covers/round.min.css?r=$version\" rel=\"stylesheet\" id=\"covercss\">\n");
+  print("  <link href=\"html/css/variant/standard.min.css?r=$version\" rel=\"stylesheet\" id=\"variantcss\">\n");
+  print("  <link href=\"html/css/musicd-np.css?r=6.4.2-md3.2\" rel=\"stylesheet\" id=\"musicdcss\">\n");
+  print("  <title>${windowTitle}</title>\n");
+  print("  <meta name=\"apple-mobile-web-app-title\" content=\"${windowTitle}\">\n");
+  print("  <meta name=\"application-name\" content=\"${windowTitle}\">\n");
+  print("  <meta name=\"theme-color\" content=\"#${themeColor}\">\n");
+  print("  <link href=\"/material/customcss/mobile\" rel=\"stylesheet\" id=\"customcss\">\n");
+  print("  <link href=\"/material/material.webmanifest?themeColor=${themeColor}\" rel=\"manifest\">\n");
+  print("  <link href=\"html/images/icon.png\" rel=\"icon shortcut\" type=\"image/png\" sizes=\"512x512\">\n");
+  if ($mobile == 0) {
+    print("  <link href=\"html/images/icon-80.png\" rel=\"icon shortcut\" type=\"image/png\" sizes=\"80x80\">\n");
+  }
+  print("  <link href=\"html/images/icon-192.png\" rel=\"icon shortcut\" type=\"image/png\" sizes=\"192x192\">\n");
+  print("  <link href=\"html/images/icon-1024.png\" rel=\"icon shortcut\" type=\"image/png\" sizes=\"1024x1024\">\n");
+  print("  <link href=\"html/images/icon.png\" rel=\"apple-touch-icon\" type=\"image/png\" sizes=\"512x512\">\n");
+  if ($mobile == 0) {
+    print("  <link href=\"html/images/icon-80.png\" rel=\"apple-touch-icon\" type=\"image/png\" sizes=\"80x80\">\n");
+  }
+  print("  <link href=\"html/images/icon-192.png\" rel=\"apple-touch-icon\" type=\"image/png\" sizes=\"192x192\">\n");
+  print("  <link href=\"html/images/icon-1024.png\" rel=\"apple-touch-icon\" type=\"image/png\" sizes=\"1024x1024\">\n");
+  print("  <meta name=\"mobile-web-app-capable\" content=\"yes\">\n");
+  print("  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n");
+  print("  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\">\n");
+  print("  </head>\n");
+  # Splitter positioning was changed because of #589, but this change then broke zooming on Android APK
+  # So, set class type so that CSS can be modified to position splitter differently for Android.
+  if (index($ua, 'Android') != -1) {
+    print(" <body class=\"IS_ANDROID\">\n");
+  } else {
+    print(" <body class=\"IS_NOT_ANDROID\">\n");
+  }
+  [% END %]
+  <div id="app" v-cloak>
+   <v-app class="lms-app" :dark="darkUi" v-touch:start="touchStart" v-touch:end="touchEnd" v-bind:class="{'no-navbar':!desktopLayout && MBAR_REP_NAV==mobileBar, 'np-full':nowPlayingFull, 'tinted':tinted, 'notracks':queueEmpty, 'lms-lyrion'
+   :lyrionColors}">
+    <div id="stringLenCheckElem" style="display:hidden; position:fixed; top:0px;"></div>
+    <v-snackbar style="z-index:3000" v-model="snackbar.show" :multi-line="true" :timeout="snackbar.timeout ? snackbar.timeout : 2500" :color="snackbar.color" top>{{ snackbar.msg }}</v-snackbar>
+    <lms-currentcover></lms-currentcover>
+    <lms-server></lms-server>
+    <lms-toolbar></lms-toolbar>
+    <lms-splitter :margin="(desktopLayout && showQueue) ? 20 : 0" class="hide-for-mini" v-bind:class="{'hide-splitter':nowPlayingExpanded}">
+     <div slot="left-pane"><lms-browse v-show="desktopLayout || page=='browse'"></lms-browse></div>
+     <div slot="right-pane"><lms-queue v-show="(desktopLayout && showQueue) || page=='queue'"></lms-queue></div>
+    </lms-splitter>
+    <lms-now-playing></lms-now-playing>
+    <lms-navdrawer></lms-navdrawer>
+    <lms-bottomnav v-if="!desktopLayout && MBAR_REP_NAV!=mobileBar"></lms-bottomnav>
+    <lms-ui-settings v-if="dialogs.uisettings"></lms-ui-settings>
+    <lms-player-settings v-if="dialogs.playersettings"></lms-player-settings>
+    <lms-player-settings-plugin v-if="dialogs.playersettingsplugin"></lms-player-settings-plugin>
+    <lms-information-dialog v-if="dialogs.info"></lms-information-dialog>
+    <lms-sync-dialog v-if="dialogs.sync"></lms-sync-dialog>
+    <lms-groupplayers-dialog v-if="dialogs.group"></lms-groupplayers-dialog>
+    <lms-volume v-if="dialogs.volume"></lms-volume>
+    <lms-groupvolume v-if="dialogs.groupvolume"></lms-groupvolume>
+    <lms-manage-players v-if="dialogs.manage"></lms-manage-players>
+    <lms-playerlist-dialog v-if="dialogs.playerlist"></lms-playerlist-dialog>
+    <lms-randommix v-if="dialogs.rndmix"></lms-randommix>
+    <lms-favorite v-if="dialogs.favorite"></lms-favorite>
+    <lms-rating-dialog v-if="dialogs.rating"></lms-rating-dialog>
+    <lms-sleep-dialog v-if="dialogs.sleep"></lms-sleep-dialog>
+    <lms-search-dialog v-if="dialogs.search"></lms-search-dialog>
+    <lms-info-dialog v-if="dialogs.iteminfo"></lms-info-dialog>
+    <lms-iframe-dialog v-if="dialogs.iframe"></lms-iframe-dialog>
+    <lms-dstm-dialog v-if="dialogs.dstm"></lms-dstm-dialog>
+    <lms-savequeue v-if="dialogs.savequeue"></lms-savequeue>
+    <lms-icon-dialog v-if="dialogs.icon"></lms-icon-dialog>
+    <lms-prompt-dialog v-if="dialogs.prompt"></lms-prompt-dialog>
+    <lms-choice-dialog v-if="dialogs.choice"></lms-choice-dialog>
+    <lms-addtoplaylist-dialog v-if="dialogs.addtoplaylist"></lms-addtoplaylist-dialog>
+    <lms-file-dialog v-if="dialogs.file"></lms-file-dialog>
+    <lms-advancedsearch-dialog v-if="dialogs.advancedsearch"></lms-advancedsearch-dialog>
+    <lms-downloadstatus v-if="dialogs.downloadstatus"></lms-downloadstatus>
+    <lms-gallery v-if="dialogs.gallery"></lms-gallery>
+    <lms-npshare-dialog v-if="dialogs.npshare"></lms-npshare-dialog>
+    <lms-screensaver></lms-screensaver>
+    <lms-volumeoverlay></lms-volumeoverlay>
+    <lms-mediasession></lms-mediasession>
+   </v-app>
+  </div>
+  [% PERL %]
+  my $lmsVersion=Plugins::MaterialSkin::Plugin->getLmsVersion();
+  my $version=Plugins::MaterialSkin::Plugin->getPluginVersion();
+  my $windowTitle=Plugins::MaterialSkin::Plugin->getWindowTitle();
+  my $hideSettings=Plugins::MaterialSkin::Plugin->getHideSettings();
+  my $statsEnabled=main::STATISTICS();
+  my $kioskMode=Plugins::MaterialSkin::Plugin->getKioskMode();
+  my $hideForKiosk=Plugins::MaterialSkin::Plugin->getHideForKiosk();
+  my $skinLanguages=Plugins::MaterialSkin::Plugin->getSkinLanguages();
+  my $homeExtra=Plugins::MaterialSkin::Plugin->getHomeExtra3rdPartyItems();
+  my $maxPlaylistEditSize=$lmsVersion>=80400 ? 1000 : 250;
+
+  # Query some LMS settingsnow to save JavaScript needing to make calls at start-up.
+  my $rndMix=Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ? 1 : 0;
+  my $remoteLibraries=Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RemoteLibrary::Plugin') ? 1 : 0;
+  my $cdPlayer=Slim::Utils::PluginManager->isEnabled('Plugins::CDplayer::Plugin') ? 1 : 0;
+  my $ratingsPlugin=Slim::Utils::PluginManager->isEnabled('Plugins::RatingsLight::Plugin')
+                    ? '"ratingslight"'
+                    : Slim::Utils::PluginManager->isEnabled('Plugins::TrackStat::Plugin')
+                      ? '"trackstat"'
+                      : 'undefined';
+  my $customSkip=Slim::Utils::PluginManager->isEnabled('Plugins::CustomSkip3::Plugin') ||
+                 Slim::Utils::PluginManager->isEnabled('Plugins::CustomSkip::Plugin') ? 1 : 0;
+  my $youTube=Slim::Utils::PluginManager->isEnabled('Plugins::YouTube::Plugin') ? 1 : 0;
+  my $mai=Slim::Utils::PluginManager->isEnabled('Plugins::MusicArtistInfo::Plugin') ? 1 : 0;
+  my $dstm=Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DontStopTheMusic::Plugin') ? 1 : 0;
+  my $blissMixer=Slim::Utils::PluginManager->isEnabled('Plugins::BlissMixer::Plugin') ? 1 : 0;
+  my $lastMix=Slim::Utils::PluginManager->isEnabled('Plugins::LastMix::Plugin') ? 1 : 0;
+  my $artistPics=$mai && Plugins::MaterialSkin::Plugin->readIntPref('plugin.musicartistinfo', 'browseArtistPictures', 1);
+  my $srvEmblem=Plugins::MaterialSkin::Plugin->readIntPref('plugin.onlinelibrary', 'enableServiceEmblem', 1);
+  my $users=Slim::Utils::PluginManager->isEnabled('Plugins::Users::Plugin') ? 1 : 0;
+
+  my $supportReleaseTypes=Plugins::MaterialSkin::Plugin->readIntPref('server', 'ignoreReleaseTypes', 0) ? "false" : "true";
+  my $groupArtistAlbumsByReleaseType=Plugins::MaterialSkin::Plugin->readIntPref('server', 'groupArtistAlbumsByReleaseType', 1);
+  my $noGenreFilter=Plugins::MaterialSkin::Plugin->readIntPref('server', 'noGenreFilter', 0);
+  my $noRoleFilter=Plugins::MaterialSkin::Plugin->readIntPref('server', 'noRoleFilter', 0);
+  my $browseagelimit=Plugins::MaterialSkin::Plugin->readIntPref('server', 'browseagelimit', 100);
+  my $groupdiscs=Plugins::MaterialSkin::Plugin->readIntPref('server', 'groupdiscs', 0);
+  my $variousArtistsString=Plugins::MaterialSkin::Plugin->readStringPref('server', 'variousArtistsString', 'Various Artists');
+  my $lang=Plugins::MaterialSkin::Plugin->readStringPref('server', 'language', 'en');
+  my $h12=index(Plugins::MaterialSkin::Plugin->readStringPref('server', 'timeFormat', '%H.%M'), '%I')>0 ? "true" : "false";
+  my $osName=Plugins::MaterialSkin::Plugin->getOsName();
+  my $haveDarkLogic=Plugins::MaterialSkin::Plugin->getHaveDarkLogic();
+
+  my $ua=$stash->get("userAgent");
+  my $mobile = index($ua, 'Android') != -1 || index($ua, 'iPad') != -1 || index($ua, 'iPhone') != -1 || index($ua, 'MobileSafari') != -1 ? 1 : 0;
+  print("<script>const LMS_MATERIAL_REVISION=\"$version\";");
+  print("const LMS_VERSION=$lmsVersion;");
+  print("const LMS_WINDOW_TITLE=\"$windowTitle\";");
+  print("const LMS_SETTINGS_HIDE=\"$hideSettings\";");
+  print("const LMS_STATS_ENABLED=$statsEnabled;");
+  print("const LMS_KIOSK_MODE=$kioskMode;");
+  print("const HIDE_FOR_KIOSK=new Set([$hideForKiosk]);");
+  print("const LMS_SKIN_LANGUAGES=new Set([$skinLanguages]);");
+  print("const LMS_MAX_PLAYLIST_EDIT_SIZE=$maxPlaylistEditSize;");
+  print("const LMS_MOBILE_SCROLL=$mobile;");
+  print("const LMS_P_RL=$remoteLibraries;");
+  print("const LMS_P_CD=$cdPlayer;");
+  print("const LMS_P_RP=$ratingsPlugin;");
+  print("const LMS_P_CS=$customSkip;");
+  print("const LMS_P_YT=$youTube;");
+  print("const LMS_P_MAI=$mai;");
+  print("const LMS_P_DSTM=$dstm;");
+  print("const LMS_P_BMIX=$blissMixer;");
+  print("const LMS_P_LMIX=$lastMix;");
+  print("const LMS_P_RMIX=$rndMix;");
+  print("const LMS_P_USERS=$users;");
+  print("const LMS_DEF_ARTIST_PICS=$artistPics;");
+  print("const LMS_DEF_SRV_EMBLEM=$srvEmblem;");
+  print("const LMS_DEF_NO_GENRE_FILTER=$noGenreFilter;");
+  print("const LMS_DEF_NO_ROLE_FILTER=$noRoleFilter;");
+  print("const LMS_NEW_MUSIC_LIMIT=$browseagelimit;");
+  print("const LMS_DEF_GROUP_DISCS=$groupdiscs;");
+  print("const LMS_DEF_VA_STRING=\"$variousArtistsString\";");
+  print("const LMS_LANG=\"$lang\";");
+  print("const LMS_DEF_SUPPORT_RELEASE_TYPES=$supportReleaseTypes;");
+  print("const LMS_DEF_GROUP_BY_RELEASE_TYPE=$groupArtistAlbumsByReleaseType;");
+  print("const LMS_DEF_12HR=$h12;");
+  print("const LMS_DARK_LOGIC=$haveDarkLogic;");
+  print("const LMS_OS_NAME=\"$osName\";");
+  print("const LMS_3RDPARTY_HOME_EXTRA=$homeExtra;");
+  print("</script>\n");
+  [% END %]
+  <script src="html/js/material.min.js?r=6.4.2-md3.2"></script>
+  [% PERL %]
+  my $ua=$stash->get("userAgent");
+  my $query=$stash->get("url_query");
+  my $useDndPolyfill = (index($ua, 'Android') != -1 && index($query, 'dndPolyfill=0') == -1 ) || index($query, 'dndPolyfill=1') != -1 ? 1 : 0;
+  if ($useDndPolyfill ==1 ) {
+    print("  <script>MobileDragDrop.polyfill({ forceApply:true, holdToDrag:250 });</script>\n");
+  }
+  [% END %]
+  <script src="material/custom.js"></script>
+  <script type="text/javascript">
+   function loadOtherFiles() {
+     var script = document.createElement("script");
+     script.src = "html/js/material-deferred.min.js?r=6.4.2-md3.3";
+     document.body.appendChild(script);
+     var link = document.createElement("link");
+     link.href = "html/css/lib-deferred.min.css?r=6.4.2";
+     link.rel = "stylesheet";
+     document.body.appendChild(link);
+   }
+   if (window.addEventListener) {
+     window.addEventListener("load", loadOtherFiles, false);
+   } else if (window.attachEvent) {
+     window.attachEvent("onload", loadOtherFiles);
+   } else {
+     window.onload = loadOtherFiles;
+   }
+  </script>
+ </body>
+</html>
+
