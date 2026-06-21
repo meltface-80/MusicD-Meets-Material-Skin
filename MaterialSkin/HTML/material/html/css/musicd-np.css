@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;600;700&display=swap');
+
+/* ============================================================
+   MusicD — Now Playing reskin
+   Overrides Material's full now-playing (.np-full) toward the
+   editorial dark/brass MusicD look. Injected on top of the
+   theme so it wins; scoped to .np-full so the mini-bar and other
+   views are untouched.
+   ============================================================ */
+
+/* --- Flat near-black background: kill the cover-derived tint/backdrop --- */
+.np-full { background-color:#0d0d0f !important; }
+.np-full .np-bgnd,
+.np-full .np-bgnd > div,
+.np-full .np-bgnd div:first-of-type { display:none !important; background:none !important; opacity:0 !important; }
+
+/* --- Cover: gentle rounding, quiet edge --- */
+.np-full .np-image .np-cover { border-radius:12px !important; }
+
+/* --- Title: Fraunces serif, large, tight (the editorial signature) --- */
+.np-full .np-title {
+  font-family:'Fraunces', Georgia, 'Times New Roman', serif !important;
+  font-size:29px !important;
+  font-weight:600 !important;
+  letter-spacing:-0.02em !important;
+  line-height:1.14 !important;
+  color:#f4f2ee !important;
+  margin:2px 0 7px !important;
+}
+
+/* --- Artist / album line: dim, calm --- */
+.np-full .np-portrait-track-info .np-text,
+.np-full .np-text.subtext {
+  font-size:16px !important;
+  color:#a7a39c !important;
+  line-height:1.45 !important;
+}
+
+/* --- Format / technical line: faint, small, lightly tracked --- */
+.np-full .np-tech {
+  font-size:12.5px !important;
+  color:#7c7872 !important;
+  letter-spacing:.02em !important;
+}
+
+/* --- Seek: brass already comes from --highlight-rgb; just calm the track & times --- */
+.np-full .np-slider:not(.np-bar-slider) { background-color:rgba(255,255,255,0.12) !important; }
+.np-full .np-pos, .np-full .np-duration {
+  color:#7c7872 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+
+/* --- Play button: brass circle with near-black cutout --- */
+.np-full .np-playpause i,
+.np-full .np-playpause div i { color:#c9a36a !important; }
+
+/* --- Prev / next / shuffle / repeat: quiet cream so brass play leads --- */
+.np-full .np-controls .v-btn:not(.np-playpause) i,
+.np-full .np-controls-wide .v-btn:not(.np-playpause) i { color:#e9e5dd !important; }
+
+
+/* ============================================================
+   MusicD — now-playing spacing + side-menu (nav drawer)   md1.10
+   ============================================================ */
+
+/* (1) Now Playing: lift the seek bar away from the transport controls */
+.np-playback { margin-top: 24px !important; }
+
+/* (2) Nav drawer — MusicD theming */
+.v-navigation-drawer { background-color:#0d0d0f !important; }
+.v-navigation-drawer .v-subheader {
+  color:#c9a36a !important;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  font-weight:600 !important;
+  font-size:11px !important;
+  opacity:1 !important;
+  height:auto !important;
+  padding-top:16px !important;
+  padding-bottom:4px !important;
+}
+.v-navigation-drawer .nd-header { border-bottom:1px solid rgba(201,163,106,.22) !important; }
+.v-navigation-drawer .v-divider { border-color:rgba(201,163,106,.16) !important; }
+
+/* (2) Kill the big middle gap. The real cause: .nd-main (id #nd-list), the
+       player-list wrapper, is hard-set to height:100% (full drawer height),
+       so its internal flex spacer fills everything below the list and shoves
+       Settings/Shortcuts to the bottom. Let it be content-height instead. */
+#nd-list, .nd-main { height:auto !important; }
+.v-navigation-drawer .spacer { display:none !important; }
+.v-navigation-drawer > div { flex:0 0 auto !important; }
+
+/* (2) Reorder: sink the Shortcuts block below Settings. The drawer is a
+       flex column, and .nd-shortcuts is unique to the Shortcuts section
+       (Settings renders as a labelled list), so :has() can target it. */
+.v-navigation-drawer > div:has(.nd-shortcuts) { order:10 !important; }
+
+/* (2) Shrink the panel to fit its content (grows down if more shortcuts
+       are added later). Material forces height:var(--100vh)!important via the
+       two-class selector `.theme--dark .v-navigation-drawer`, so we must match
+       that specificity (and musicd-np.css loads last, so we win the tie). */
+.v-navigation-drawer { overflow-y:auto !important; }
+.theme--dark .v-navigation-drawer,
+.theme--light .v-navigation-drawer { height:auto !important; max-height:var(--100vh) !important; }
+
+/* (3) Denser browse grid: 3 columns everywhere. Material hardcodes the grid
+       base in JS (GRID_MIN_WIDTH, lowered to 118 to match) and mirrors it in
+       this CSS var, so both must move together or the layout desyncs. */
+:root { --min-grid-width: 118px; }
+
+/* ============================================================
+   MusicD md2.5 — now-playing seek bar: force brass fill
+   (custom slider .value/.buffer + Vuetify track-fill/thumb)
+   ============================================================ */
+.np-slider .value, .np-bar-slider .value,
+.np-slider .v-slider__track-fill, .np-bar-slider .v-slider__track-fill {
+  background-color: var(--primary-color) !important;
+}
+.np-slider .buffer, .np-bar-slider .buffer {
+  background-color: rgba(var(--highlight-rgb), 0.40) !important;
+}
+.np-slider .v-slider__thumb, .np-bar-slider .v-slider__thumb {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* ============================================================
+   MusicD md2.6 — FORCE brass theme variables (root-cause fix)
+   Material's setColor() writes --primary-color / --highlight-rgb as
+   INLINE styles on <html>, derived from the saved "color" preference
+   (often blue/lyrion from stock Material). Inline is set WITHOUT
+   !important, so these !important rules win and lock the whole UI to
+   MusicD brass regardless of the stored colour pref.
+   ============================================================ */
+:root {
+  --primary-color: #c9a36a !important;
+  --accent-color: #d8bd8c !important;
+  --highlight-rgb: 201,163,106 !important;
+  --default-primary-color: #c9a36a !important;
+  --default-accent-color: #d8bd8c !important;
+  --default-highlight-rgb: 201,163,106 !important;
+}
+
+/* ============================================================
+   MusicD md2.7 — settings / dialog / popup surfaces to near-black
+   The active theme (themes/dark.min.css) sets --std-background-color:#212121
+   and --std-popup-background-color:#303030, which the settings pages use.
+   Force them to the MusicD near-black (musicd-np.css loads last + reaches
+   the settings pages, which is why the brass accents already apply).
+   ============================================================ */
+:root {
+  --std-background-color: #0d0d0f !important;
+  --std-popup-background-color: #1a1a1c !important;
+}
+
+/* ============================================================
+   MusicD md2.8 — flatten home section-header bands
+   Theme uses --browse-header-color: rgba(64,64,64,0.3) behind each
+   section header, which reads as repeated lighter bands over the
+   black. Force it to the MusicD near-black so the home is uniform.
+   ============================================================ */
+:root {
+  --browse-header-color: #0d0d0f !important;
+}
+
+/* ============================================================
+   MusicD md3.1 — Home screen polish (v1.0.6)
+   Pure restyle of Material's real home classes (no layout fork):
+   section headers, cover tiles, icon tiles, text tiles, emblem.
+   Remove this block to revert entirely.
+   ============================================================ */
+
+/* Section headers — a touch more presence + a hairline brass rule
+   beneath each, so sections read as deliberate blocks. */
+.browse-header .v-list__tile__title,
+.grid-header .v-list__tile__title { letter-spacing:0.03em !important; }
+.browse-header { box-shadow: inset 0 -1px 0 rgba(201,163,106,0.16) !important; }
+
+/* Cover tiles — soft depth + calm hover lift with a brass ring.
+   Covers are already 9px-rounded by round.min.css; we add depth only.
+   :not(.image-grid-item-icon) keeps glyph icons out of this (they share
+   the .image-grid-item-img class). */
+.image-grid-item-img:not(.image-grid-item-icon) {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.55) !important;
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+.msk-is-non-touch .image-grid-item:not(.defcursor):hover .image-grid-item-img:not(.image-grid-item-icon) {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,163,106,0.45) !important;
+}
+
+/* Icon tiles (History, 5 Stars, …) — turn bare glyphs into brass
+   quick-access cards. div.* targets the container only, not the glyph. */
+div.image-grid-item-icon {
+  background: rgba(201,163,106,0.06) !important;
+  border: 1px solid rgba(201,163,106,0.16) !important;
+  border-radius: 12px !important;
+  transition: background .18s ease, border-color .18s ease !important;
+}
+.msk-is-non-touch .image-grid-item:hover div.image-grid-item-icon {
+  background: rgba(201,163,106,0.12) !important;
+  border-color: rgba(201,163,106,0.40) !important;
+}
+/* Tint font-glyph icons brass (SVG-image icons keep their own colour). */
+.image-grid-item-icon.image-grid-item-img { color: var(--primary-color) !important; }
+
+/* Text tiles (genre / action chips) — brass-edged pills. */
+.text-grid-item > div:not(.image-grid-btn) {
+  background-color: rgba(201,163,106,0.07) !important;
+  border: 1px solid rgba(201,163,106,0.16) !important;
+  border-radius: 12px !important;
+}
+.msk-is-non-touch .text-grid-item > div:not(.image-grid-btn):hover {
+  background-color: rgba(201,163,106,0.14) !important;
+  border-color: rgba(201,163,106,0.40) !important;
+}
+
+/* Hide the Qobuz/source "Q" emblem on home & browse covers
+   (matches the share-card change). Delete this rule to bring it back. */
+.lms-list .image-grid-item .emblem,
+.lms-image-grid .image-grid-item .emblem { display:none !important; }
+
+/* ============================================================
+   Collapsible drawer groups (v1.0.7)
+   The Shortcuts & Settings subheaders in Material's own ☰ drawer
+   become tap-to-expand. (Settings starts collapsed.)
+   ============================================================ */
+.nd-collapse-header { cursor:pointer !important; user-select:none !important; }
+.nd-collapse-header:hover { background: rgba(201,163,106,0.06) !important; }
+.nd-collapse-chevron {
+  margin-left:auto !important; font-size:20px !important;
+  color: var(--primary-color) !important; opacity:.85 !important;
+}
