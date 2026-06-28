@@ -1,11 +1,12 @@
 /* ============================================================
-   MusicD — Apple Music UI redesign  (v1.0.17)
+   MusicD — Apple Music UI redesign  (v1.0.18)
    A heavy CSS reskin of LMS-Material toward the iOS Apple Music
    app: big editorial section headers, rounded album art, a
    floating now-playing card, SF Pro type, and the signature red
-   accent on near-black. Surfaces are FLAT solid colour (no
-   translucent/saturate frosting) for a clean, even look — red is
-   used only as an accent, never as a background wash.
+   accent. ONE flat soft dark-grey surface (#1c1c1e) is used
+   throughout — no maroon wash, no harsh pure-black — for a clean,
+   even, low-contrast look. Red is used only as an accent, never
+   as a background wash.
 
    Selectors verified against style.min.css / mobile.min.css /
    lib.min.css. Loaded last in the cascade; wins with !important.
@@ -24,9 +25,25 @@
   --default-accent-color:  #fc3c44 !important;
   --default-highlight-rgb: 252,60,68 !important;
 
-  --std-background-color:       #0a0a0c !important;
+  /* ── UNIFIED FLAT BACKGROUND ──────────────────────────────
+     One soft dark-grey surface everywhere — no maroon wash, no
+     harsh pure-black. Material derives --background-color from
+     --std-background-color in the standard variant, but as
+     color-mix(--std-background-color, --tint-color 25%) in the
+     COLOURED variant — that 25% red mix is what turned settings
+     maroon. We pin --background-color directly AND neutralise
+     --tint-color, so every surface stays flat grey in either
+     variant. Every Material surface token is forced to match.   */
+  --bgnd:                       #1c1c1e;
+  --std-background-color:       #1c1c1e !important;
+  --background-color:           #1c1c1e !important;
   --std-popup-background-color: #1c1c1e !important;
-  --browse-header-color:        #0a0a0c !important;
+  --browse-header-color:        #1c1c1e !important;
+  --tint-color:                 #1c1c1e !important;
+  --top-toolbar-color:          #1c1c1e !important;
+  --sub-toolbar-color:          #1c1c1e !important;
+  --bottom-toolbar-color:       #1c1c1e !important;
+  --dialog-toolbar-color:       #1c1c1e !important;
 
   /* Bottom-nav tab colours */
   --active-nav-btn-color:      #fc3c44 !important;
@@ -53,7 +70,7 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
    Flat near-black, no blur/saturate (saturate over the red theme
    bg was producing a murky maroon wash). Clean, even colour.     */
 .lms-toolbar, .v-toolbar {
-  background: #0d0d0f !important;
+  background: #1c1c1e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border-bottom: 1px solid rgba(255,255,255,0.06) !important;
@@ -68,7 +85,7 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
 
 /* ── 3. SUB-TOOLBAR — flat solid ────────────────────────────  */
 .subtoolbar {
-  background: #0d0d0f !important;
+  background: #1c1c1e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border-bottom: 1px solid rgba(255,255,255,0.06) !important;
@@ -79,7 +96,7 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
    target the .active-nav / .inactive-nav classes Material uses on
    mobile (NOT Vuetify's .v-btn--active).                         */
 .lms-bottom-nav, .v-bottom-nav {
-  background: #0d0d0f !important;
+  background: #1c1c1e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border-top: 1px solid rgba(255,255,255,0.07) !important;
@@ -309,8 +326,8 @@ div.image-grid-item-icon {
 .v-dialog--fullscreen > .v-card,
 .v-dialog--fullscreen .v-card,
 .v-dialog--fullscreen .v-sheet {
-  background: #0a0a0c !important;
-  background-color: #0a0a0c !important;
+  background: #1c1c1e !important;
+  background-color: #1c1c1e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border: none !important;
@@ -325,7 +342,7 @@ div.image-grid-item-icon {
 /* dialog toolbar: solid, no frosted red tint */
 .v-dialog--fullscreen .dialog-toolbar,
 .v-dialog--fullscreen .v-toolbar {
-  background: #0a0a0c !important;
+  background: #1c1c1e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -354,7 +371,7 @@ div.image-grid-item-icon {
 }
 
 /* ── 13. NAV DRAWER ─────────────────────────────────────────  */
-.v-navigation-drawer { background-color: #0a0a0c !important; overflow-y: auto !important; }
+.v-navigation-drawer { background-color: #1c1c1e !important; overflow-y: auto !important; }
 .v-navigation-drawer .v-subheader {
   color: #fc3c44 !important;
   text-transform: uppercase !important;
