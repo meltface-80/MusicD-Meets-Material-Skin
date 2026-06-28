@@ -13,25 +13,17 @@ package Plugins::MaterialSkin::Search;
 use strict;
 
 use Date::Parse qw(str2time);
-use File::Spec::Functions qw(:ALL);
-use Digest::MD5 qw(md5_hex);
-use Scalar::Util qw(blessed);
-use Storable;
 
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
-use Slim::Utils::Log;
-use Slim::Utils::Prefs;
 
 sub advancedSearch {
 	my ($client, $params) = @_;
 
 	my %query   = ();
 	my @qstring = ();
-	
-	#my $type = ($params->{'searchType'} || '') =~ /^(Track|Album)$/ ? $1 : 'Track';
 	
 	# keep a copy of the search params to be stored in a saved search
 	my %searchParams;
@@ -44,11 +36,6 @@ sub advancedSearch {
 		next unless $params->{$key};
 
 		my $newKey = $1;
-
-		#if ($params->{'resetAdvSearch'}) {
-		#	delete $params->{$key};
-		#	next;
-		#}
 
 		# Stuff the requested item back into the params hash, under
 		# the special "search" hash. Because Template Toolkit uses '.'
@@ -202,12 +189,7 @@ sub advancedSearch {
 		}
 
 		if ($query{'contributor.namesearch'} || $joins{'contributor'}) {
-
 			push @joins, { "contributorTracks" => 'contributor' };
-
-		} else {
-
-			push @joins, "contributorTracks";
 		}
 	}
 
@@ -265,13 +247,6 @@ sub advancedSearch {
 		push @joins, 'persistent';
 	}
 
-    # TODO: Library ID???
-	#if ( my $library_id = Slim::Music::VirtualLibraries->getLibraryIdForClient($client) ) {
-    #
-	#	push @joins, 'libraryTracks';
-	#	$query{'libraryTracks.library'} = $library_id;
-	#}
-
 	# Disambiguate year
 	if ($query{'year'}) {
 		$query{'me.year'} = delete $query{'year'};
@@ -285,19 +260,16 @@ sub advancedSearch {
 	);
 
 	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
-	$attrs{'order_by'} = "me.disc, me.titlesort $collate"; #if $type eq 'Track';
+	$attrs{'order_by'} = "me.disc, me.titlesort $collate";
 
 	# Create a resultset - have fillInSearchResults do the actual search.
 	my $tracksRs = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
 
-	my $rs;
-	#if ( $type eq 'Album' ) {
-		$rs = Slim::Schema->search('Album', {
-			'id' => { 'in' => $tracksRs->get_column('album')->as_query },
-		},{
-			'order_by' => "me.disc, me.titlesort $collate",
-		});
-	#}
+	my $rs = Slim::Schema->search('Album', {
+		'id' => { 'in' => $tracksRs->get_column('album')->as_query },
+	},{
+		'order_by' => "me.disc, me.titlesort $collate",
+	});
 
 	if ( $params->{'action'} && $params->{'action'} eq 'saveLibraryView' && (my $saveSearch = $params->{saveSearch}) ) {
 		# build our own resultset, as we don't want the result to be sorted

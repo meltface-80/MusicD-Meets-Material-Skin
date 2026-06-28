@@ -1,5 +1,5 @@
 setTimeout(function () {
-  var splitter = document.getElementsByClassName("vue-splitter");
+  var splitter = document.getElementsByClassName("lms-splitter");
   if (undefined!=splitter) {
     for (var i = 0, len=splitter.length; i < len; i++) {
       splitter[i].remove(); 
