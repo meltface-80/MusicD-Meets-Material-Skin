@@ -1,5 +1,5 @@
 /* ============================================================
-   MusicD — Apple Music UI redesign  (v1.0.19)
+   MusicD — Apple Music UI redesign  (v1.0.20)
    A heavy CSS reskin of LMS-Material toward the iOS Apple Music
    app: big editorial section headers, rounded album art, a
    floating now-playing card, SF Pro type, and the signature red
@@ -135,7 +135,7 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   left: 8px !important;
   right: 8px !important;
   width: auto !important;
-  height: 64px !important;            /* taller; set directly — JS writes --mobile-npbar-height inline */
+  height: 70px !important;            /* taller; set directly — JS writes --mobile-npbar-height inline */
   border-radius: 18px !important;
   bottom: calc(var(--bottom-toolbar-height) + 6px) !important;
   background: rgba(44,44,46,0.72) !important;
@@ -154,45 +154,58 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   height: 2px !important;
 }
 /* card insets: shift artwork (base left:2px) and play button
-   (base right:6px) in to match the 8px card inset.               */
+   (base right:6px) in to match the 8px card inset. Applied to BOTH
+   mobile variants — the "thick" bar AND the "rep-nav" bar (the one
+   that replaces the bottom navigation; this is the variant in use). */
 .np-bar-mob-thick .np-bar-image,
 .np-bar-mob-nav .np-bar-image { left: 10px !important; }
 .np-bar-mob-thick .np-playpause,
 .np-bar-mob-nav .np-playpause { right: 14px !important; }
 
-/* Taller bar (64px): grow artwork to 52px and re-centre each
-   independently-fixed child on the new card centre. Each child's
-   `bottom` is calc'd from --bottom-toolbar-height, NOT the bar
-   height, so they must be nudged up manually. (thick = standard
-   mobile mini-player.)                                            */
-.np-bar-mob-thick .np-bar-image {
-  height: 52px !important; width: 52px !important;
-  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 12px) !important;
+/* Taller bar (70px): grow artwork and re-centre each
+   independently-fixed child on the new card centre. Card bottom =
+   --bottom-toolbar-height + 6px, height 70 → centre = +41px; each
+   child's `bottom` = +41 − (childHeight/2). Done for BOTH variants
+   so it works regardless of thick vs rep-nav.                      */
+.np-bar-mob-thick .np-bar-image,
+.np-bar-mob-nav .np-bar-image {
+  height: 54px !important; width: 54px !important;
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 14px) !important;
 }
-.np-bar-mob-thick .np-bar-image .np-cover { height: 50px !important; width: 50px !important; }
+.np-bar-mob-thick .np-bar-image .np-cover,
+.np-bar-mob-nav .np-bar-image .np-cover { height: 52px !important; width: 52px !important; }
+
+/* play button — thick is 32px, rep-nav is 40px → centre each */
 .np-bar-mob-thick .np-playpause {
-  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 22px) !important;
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 25px) !important;
 }
-.np-bar-mob-thick .np-bar-details {
-  left: 68px !important;                       /* clear the larger 52px art */
-  width: calc(100vw - 118px) !important;
-  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 16px) !important;
+.np-bar-mob-nav .np-playpause {
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 21px) !important;
 }
+
+/* track details — both variants, cleared past the 54px art */
+.np-bar-mob-thick .np-bar-details,
 .np-bar-mob-nav .np-bar-details {
   left: 70px !important;
-  width: calc(100vw - 130px) !important;
+  width: calc(100vw - 120px) !important;
+  height: 54px !important;
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 14px) !important;
 }
 /* cover pill + text inside the card */
 .np-bar-image .np-cover { border-radius: 8px !important; box-shadow: 0 3px 12px rgba(0,0,0,0.6) !important; }
 
-/* Remove the non-functional queue toggle from the mini-bar (scoped
-   to .np-bar so the desktop toolbar / NP-full queue stay intact).  */
+/* Remove the queue glyph the user sees on the mobile mini-bar. The
+   real .np-bar-queue is desktop-only (not in the mobile DOM); the
+   button actually shown on the phone bar is .np-changepage (#cpage),
+   which only appears on the rep-nav variant. Scoped to .np-bar so
+   the desktop toolbar queue toggle / NP-full queue are untouched.  */
+.np-bar .np-changepage,
+.np-bar #cpage,
 .np-bar .np-bar-queue { display: none !important; }
 
 /* Taller floating card overlaps a little more content than the
-   layout reserves (reserve uses the JS-set 48px, bar is now 64px);
-   pad the scroll lists so the last row clears the card.            */
-.lms-list, .lms-image-grid, .lms-jumplist { padding-bottom: 22px !important; }
+   layout reserves; pad the scroll lists so the last row clears it. */
+.lms-list, .lms-image-grid, .lms-jumplist { padding-bottom: 24px !important; }
 .np-bar .v-list__tile__title, .np-bar-details .np-bar-title {
   color: #ffffff !important; font-weight: 600 !important; font-size: 14px !important;
 }
