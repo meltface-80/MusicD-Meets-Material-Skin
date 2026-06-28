@@ -1,62 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
 
 /* ============================================================
-   MusicD — Now Playing reskin
-   Overrides Material's full now-playing (.np-full) toward the
-   editorial dark/brass MusicD look. Injected on top of the
-   theme so it wins; scoped to .np-full so the mini-bar and other
-   views are untouched.
+   MusicD — Apple Music visual theme (v1.0.13)
+   Overrides Material toward an Apple Music aesthetic:
+   blurred album-art background, system UI sans-serif, red accent.
+   Injected last in the cascade; scoped where possible so the
+   mini-bar and other views are untouched.
    ============================================================ */
 
-/* --- Flat near-black background: kill the cover-derived tint/backdrop --- */
-.np-full { background-color:#0d0d0f !important; }
-.np-full .np-bgnd,
+/* --- Apple Music: blurred album-art fills the full NP view --- */
+.np-full { background-color: rgba(0,0,0,0) !important; }
+.np-full .np-bgnd { display:block !important; opacity:1 !important; }
 .np-full .np-bgnd > div,
-.np-full .np-bgnd div:first-of-type { display:none !important; background:none !important; opacity:0 !important; }
+.np-full .np-bgnd div:first-of-type {
+  filter: saturate(2.5) blur(42px) brightness(0.28) !important;
+  display:block !important; opacity:1 !important;
+}
 
-/* --- Cover: gentle rounding, quiet edge --- */
-.np-full .np-image .np-cover { border-radius:12px !important; }
+/* --- Cover: 12px rounding + cinematic shadow --- */
+.np-full .np-image .np-cover {
+  border-radius:12px !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.80) !important;
+}
 
-/* --- Title: Fraunces serif, large, tight (the editorial signature) --- */
+/* --- Title: system UI, bold, pure white --- */
 .np-full .np-title {
-  font-family:'Fraunces', Georgia, 'Times New Roman', serif !important;
+  font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
   font-size:29px !important;
-  font-weight:600 !important;
+  font-weight:700 !important;
   letter-spacing:-0.02em !important;
   line-height:1.14 !important;
-  color:#f4f2ee !important;
+  color:#ffffff !important;
   margin:2px 0 7px !important;
 }
 
-/* --- Artist / album line: dim, calm --- */
+/* --- Artist / album line: system UI, muted white --- */
 .np-full .np-portrait-track-info .np-text,
 .np-full .np-text.subtext {
+  font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
   font-size:16px !important;
-  color:#a7a39c !important;
+  color:rgba(255,255,255,0.62) !important;
   line-height:1.45 !important;
 }
 
 /* --- Format / technical line: faint, small, lightly tracked --- */
 .np-full .np-tech {
   font-size:12.5px !important;
-  color:#7c7872 !important;
+  color:rgba(255,255,255,0.36) !important;
   letter-spacing:.02em !important;
 }
 
-/* --- Seek: brass already comes from --highlight-rgb; just calm the track & times --- */
-.np-full .np-slider:not(.np-bar-slider) { background-color:rgba(255,255,255,0.12) !important; }
+/* --- Seek: track background, time labels --- */
+.np-full .np-slider:not(.np-bar-slider) { background-color:rgba(255,255,255,0.18) !important; }
 .np-full .np-pos, .np-full .np-duration {
-  color:#7c7872 !important;
+  color:rgba(255,255,255,0.42) !important;
   font-variant-numeric:tabular-nums !important;
 }
 
-/* --- Play button: brass circle with near-black cutout --- */
+/* --- Play button: Apple red --- */
 .np-full .np-playpause i,
-.np-full .np-playpause div i { color:#c9a36a !important; }
+.np-full .np-playpause div i { color:#fc3c44 !important; }
 
-/* --- Prev / next / shuffle / repeat: quiet cream so brass play leads --- */
+/* --- Prev / next / shuffle / repeat: white so red play leads --- */
 .np-full .np-controls .v-btn:not(.np-playpause) i,
-.np-full .np-controls-wide .v-btn:not(.np-playpause) i { color:#e9e5dd !important; }
+.np-full .np-controls-wide .v-btn:not(.np-playpause) i { color:rgba(255,255,255,0.80) !important; }
 
 
 /* ============================================================
@@ -66,10 +73,10 @@
 /* (1) Now Playing: lift the seek bar away from the transport controls */
 .np-playback { margin-top: 24px !important; }
 
-/* (2) Nav drawer — MusicD theming */
+/* (2) Nav drawer — Apple red theming */
 .v-navigation-drawer { background-color:#0d0d0f !important; }
 .v-navigation-drawer .v-subheader {
-  color:#c9a36a !important;
+  color:#fc3c44 !important;
   text-transform:uppercase;
   letter-spacing:.13em;
   font-weight:600 !important;
@@ -79,8 +86,8 @@
   padding-top:16px !important;
   padding-bottom:4px !important;
 }
-.v-navigation-drawer .nd-header { border-bottom:1px solid rgba(201,163,106,.22) !important; }
-.v-navigation-drawer .v-divider { border-color:rgba(201,163,106,.16) !important; }
+.v-navigation-drawer .nd-header { border-bottom:1px solid rgba(252,60,68,.22) !important; }
+.v-navigation-drawer .v-divider { border-color:rgba(252,60,68,.16) !important; }
 
 /* (2) Kill the big middle gap. The real cause: .nd-main (id #nd-list), the
        player-list wrapper, is hard-set to height:100% (full drawer height),
@@ -109,7 +116,7 @@
 :root { --min-grid-width: 118px; }
 
 /* ============================================================
-   MusicD md2.5 — now-playing seek bar: force brass fill
+   MusicD md2.5 — now-playing seek bar: force red fill
    (custom slider .value/.buffer + Vuetify track-fill/thumb)
    ============================================================ */
 .np-slider .value, .np-bar-slider .value,
@@ -125,28 +132,26 @@
 }
 
 /* ============================================================
-   MusicD md2.6 — FORCE brass theme variables (root-cause fix)
+   MusicD md2.6 — FORCE Apple red theme variables (root-cause fix)
    Material's setColor() writes --primary-color / --highlight-rgb as
    INLINE styles on <html>, derived from the saved "color" preference
    (often blue/lyrion from stock Material). Inline is set WITHOUT
    !important, so these !important rules win and lock the whole UI to
-   MusicD brass regardless of the stored colour pref.
+   Apple Music red regardless of the stored colour pref.
    ============================================================ */
 :root {
-  --primary-color: #c9a36a !important;
-  --accent-color: #d8bd8c !important;
-  --highlight-rgb: 201,163,106 !important;
-  --default-primary-color: #c9a36a !important;
-  --default-accent-color: #d8bd8c !important;
-  --default-highlight-rgb: 201,163,106 !important;
+  --primary-color: #fc3c44 !important;
+  --accent-color: #ff6b6b !important;
+  --highlight-rgb: 252,60,68 !important;
+  --default-primary-color: #fc3c44 !important;
+  --default-accent-color: #ff6b6b !important;
+  --default-highlight-rgb: 252,60,68 !important;
 }
 
 /* ============================================================
    MusicD md2.7 — settings / dialog / popup surfaces to near-black
-   The active theme (themes/dark.min.css) sets --std-background-color:#212121
-   and --std-popup-background-color:#303030, which the settings pages use.
-   Force them to the MusicD near-black (musicd-np.css loads last + reaches
-   the settings pages, which is why the brass accents already apply).
+   The active theme sets --std-background-color:#212121 and
+   --std-popup-background-color:#303030. Force to MusicD near-black.
    ============================================================ */
 :root {
   --std-background-color: #0d0d0f !important;
@@ -155,78 +160,67 @@
 
 /* ============================================================
    MusicD md2.8 — flatten home section-header bands
-   Theme uses --browse-header-color: rgba(64,64,64,0.3) behind each
-   section header, which reads as repeated lighter bands over the
-   black. Force it to the MusicD near-black so the home is uniform.
    ============================================================ */
 :root {
   --browse-header-color: #0d0d0f !important;
 }
 
 /* ============================================================
-   MusicD md3.1 — Home screen polish (v1.0.6)
+   MusicD md3.1 — Home screen polish
    Pure restyle of Material's real home classes (no layout fork):
-   section headers, cover tiles, icon tiles, text tiles, emblem.
+   section headers, cover tiles, icon tiles, text tiles.
    Remove this block to revert entirely.
    ============================================================ */
 
-/* Section headers — a touch more presence + a hairline brass rule
-   beneath each, so sections read as deliberate blocks. */
+/* Section headers — hairline rule beneath each block */
 .browse-header .v-list__tile__title,
 .grid-header .v-list__tile__title { letter-spacing:0.03em !important; }
-.browse-header { box-shadow: inset 0 -1px 0 rgba(201,163,106,0.16) !important; }
+.browse-header { box-shadow: inset 0 -1px 0 rgba(252,60,68,0.16) !important; }
 
-/* Cover tiles — soft depth + calm hover lift with a brass ring.
-   Covers are already 9px-rounded by round.min.css; we add depth only.
-   :not(.image-grid-item-icon) keeps glyph icons out of this (they share
-   the .image-grid-item-img class). */
+/* Cover tiles — cinematic depth + lift hover with red ring */
 .image-grid-item-img:not(.image-grid-item-icon) {
-  box-shadow: 0 3px 12px rgba(0,0,0,0.55) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.65) !important;
   transition: transform .18s ease, box-shadow .18s ease !important;
 }
 .msk-is-non-touch .image-grid-item:not(.defcursor):hover .image-grid-item-img:not(.image-grid-item-icon) {
   transform: translateY(-3px) !important;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,163,106,0.45) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.72), 0 0 0 2px rgba(252,60,68,0.55) !important;
 }
 
-/* Icon tiles (History, 5 Stars, …) — turn bare glyphs into brass
-   quick-access cards. div.* targets the container only, not the glyph. */
+/* Icon tiles — red-tinted quick-access cards */
 div.image-grid-item-icon {
-  background: rgba(201,163,106,0.06) !important;
-  border: 1px solid rgba(201,163,106,0.16) !important;
+  background: rgba(252,60,68,0.06) !important;
+  border: 1px solid rgba(252,60,68,0.16) !important;
   border-radius: 12px !important;
   transition: background .18s ease, border-color .18s ease !important;
 }
 .msk-is-non-touch .image-grid-item:hover div.image-grid-item-icon {
-  background: rgba(201,163,106,0.12) !important;
-  border-color: rgba(201,163,106,0.40) !important;
+  background: rgba(252,60,68,0.12) !important;
+  border-color: rgba(252,60,68,0.40) !important;
 }
-/* Tint font-glyph icons brass (SVG-image icons keep their own colour). */
+/* Tint font-glyph icons red (SVG-image icons keep their own colour) */
 .image-grid-item-icon.image-grid-item-img { color: var(--primary-color) !important; }
 
-/* Text tiles (genre / action chips) — brass-edged pills. */
+/* Text tiles (genre / action chips) — red-edged pills */
 .text-grid-item > div:not(.image-grid-btn) {
-  background-color: rgba(201,163,106,0.07) !important;
-  border: 1px solid rgba(201,163,106,0.16) !important;
+  background-color: rgba(252,60,68,0.07) !important;
+  border: 1px solid rgba(252,60,68,0.16) !important;
   border-radius: 12px !important;
 }
 .msk-is-non-touch .text-grid-item > div:not(.image-grid-btn):hover {
-  background-color: rgba(201,163,106,0.14) !important;
-  border-color: rgba(201,163,106,0.40) !important;
+  background-color: rgba(252,60,68,0.14) !important;
+  border-color: rgba(252,60,68,0.40) !important;
 }
 
-/* Hide the Qobuz/source "Q" emblem on home & browse covers
-   (matches the share-card change). Delete this rule to bring it back. */
+/* Hide the source emblem on home & browse covers */
 .lms-list .image-grid-item .emblem,
 .lms-image-grid .image-grid-item .emblem { display:none !important; }
 
 /* ============================================================
-   Collapsible drawer groups (v1.0.7)
-   The Shortcuts & Settings subheaders in Material's own ☰ drawer
-   become tap-to-expand. (Settings starts collapsed.)
+   Collapsible drawer groups
    ============================================================ */
 .nd-collapse-header { cursor:pointer !important; user-select:none !important; }
-.nd-collapse-header:hover { background: rgba(201,163,106,0.06) !important; }
+.nd-collapse-header:hover { background: rgba(252,60,68,0.06) !important; }
 .nd-collapse-chevron {
   margin-left:auto !important; font-size:20px !important;
   color: var(--primary-color) !important; opacity:.85 !important;
