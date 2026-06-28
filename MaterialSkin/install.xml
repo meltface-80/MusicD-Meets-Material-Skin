@@ -5,7 +5,7 @@
   <description>PLUGIN_MATERIAL_SKIN</description>
   <creator>Musicd Duck</creator>
   <icon>plugins/MaterialSkin/html/images/icon.svg</icon>
-  <version>1.0.20</version>
+  <version>1.0.21</version>
   <defaultState>enabled</defaultState>
   <type>2</type>
   <homepageURL>https://github.com/meltface-80/MusicD-LMS-Skin</homepageURL>

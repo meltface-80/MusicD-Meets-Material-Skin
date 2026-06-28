@@ -1,5 +1,5 @@
 /* ============================================================
-   MusicD — Apple Music UI redesign  (v1.0.20)
+   MusicD — Apple Music UI redesign  (v1.0.21)
    A heavy CSS reskin of LMS-Material toward the iOS Apple Music
    app: big editorial section headers, rounded album art, a
    floating now-playing card, SF Pro type, and the signature red
@@ -137,7 +137,11 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   width: auto !important;
   height: 70px !important;            /* taller; set directly — JS writes --mobile-npbar-height inline */
   border-radius: 18px !important;
-  bottom: calc(var(--bottom-toolbar-height) + 6px) !important;
+  /* include --bottom-np-pad so the card shares the children's
+     baseline. In rep-nav mode --bottom-np-pad is the safe-area
+     inset (~34px); the children include it but the card didn't, so
+     the card sat low and content floated high, leaving a gap.      */
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 6px) !important;
   background: rgba(44,44,46,0.72) !important;
   backdrop-filter: saturate(180%) blur(20px) !important;
   -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
@@ -150,7 +154,7 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   left: 8px !important;
   right: 8px !important;
   width: auto !important;
-  bottom: calc(var(--bottom-toolbar-height) + 6px) !important;
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 6px) !important;
   height: 2px !important;
 }
 /* card insets: shift artwork (base left:2px) and play button
