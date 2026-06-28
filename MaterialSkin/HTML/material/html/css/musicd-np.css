@@ -1,9 +1,11 @@
 /* ============================================================
-   MusicD — Apple Music UI redesign  (v1.0.16)
+   MusicD — Apple Music UI redesign  (v1.0.17)
    A heavy CSS reskin of LMS-Material toward the iOS Apple Music
-   app: big editorial section headers, rounded album art, frosted
-   translucent chrome, a floating now-playing card, SF Pro type,
-   and the signature red accent on near-black.
+   app: big editorial section headers, rounded album art, a
+   floating now-playing card, SF Pro type, and the signature red
+   accent on near-black. Surfaces are FLAT solid colour (no
+   translucent/saturate frosting) for a clean, even look — red is
+   used only as an accent, never as a background wash.
 
    Selectors verified against style.min.css / mobile.min.css /
    lib.min.css. Loaded last in the cascade; wins with !important.
@@ -47,11 +49,13 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
                'SF Pro Text', 'Helvetica Neue', Arial, sans-serif !important;
 }
 
-/* ── 2. TOP TOOLBAR — frosted glass ─────────────────────────  */
+/* ── 2. TOP TOOLBAR — flat solid ────────────────────────────
+   Flat near-black, no blur/saturate (saturate over the red theme
+   bg was producing a murky maroon wash). Clean, even colour.     */
 .lms-toolbar, .v-toolbar {
-  background: rgba(10,10,12,0.72) !important;
-  backdrop-filter: blur(30px) saturate(1.7) !important;
-  -webkit-backdrop-filter: blur(30px) saturate(1.7) !important;
+  background: #0d0d0f !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-bottom: 1px solid rgba(255,255,255,0.06) !important;
   box-shadow: none !important;
 }
@@ -62,22 +66,22 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   color: #ffffff !important;
 }
 
-/* ── 3. SUB-TOOLBAR — frosted glass ─────────────────────────  */
+/* ── 3. SUB-TOOLBAR — flat solid ────────────────────────────  */
 .subtoolbar {
-  background: rgba(10,10,12,0.72) !important;
-  backdrop-filter: blur(30px) saturate(1.7) !important;
-  -webkit-backdrop-filter: blur(30px) saturate(1.7) !important;
+  background: #0d0d0f !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-bottom: 1px solid rgba(255,255,255,0.06) !important;
 }
 
-/* ── 4. BOTTOM NAV / TAB BAR — frosted, red active ──────────
+/* ── 4. BOTTOM NAV / TAB BAR — flat solid, red active ───────
    Active colour is set via --active-nav-btn-color (§0). We also
    target the .active-nav / .inactive-nav classes Material uses on
    mobile (NOT Vuetify's .v-btn--active).                         */
 .lms-bottom-nav, .v-bottom-nav {
-  background: rgba(12,12,14,0.80) !important;
-  backdrop-filter: blur(36px) saturate(2) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(2) !important;
+  background: #0d0d0f !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-top: 1px solid rgba(255,255,255,0.07) !important;
   box-shadow: none !important;
 }
@@ -102,10 +106,10 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   width: auto !important;
   border-radius: 16px !important;
   bottom: calc(var(--bottom-toolbar-height) + 6px) !important;
-  background: rgba(28,28,32,0.72) !important;
-  backdrop-filter: blur(40px) saturate(2) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(2) !important;
-  border: 0.5px solid rgba(255,255,255,0.12) !important;
+  background: #1c1c1e !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0.5px solid rgba(255,255,255,0.10) !important;
   box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4) !important;
   overflow: hidden !important;
 }
@@ -224,7 +228,7 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
 }
 .msk-is-non-touch .image-grid-item:not(.defcursor):hover .image-grid-item-img:not(.image-grid-item-icon) {
   transform: translateY(-4px) !important;
-  box-shadow: 0 14px 34px rgba(0,0,0,0.7), 0 0 0 2px rgba(252,60,68,0.5) !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.7) !important;
 }
 .image-grid-text {
   font-weight: 600 !important;
@@ -238,27 +242,24 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   font-weight: 400 !important;
   color: rgba(255,255,255,0.45) !important;
 }
-/* icon tiles (History, 5 Stars, …) */
+/* icon tiles (History, 5 Stars, …) — flat neutral, no red wash */
 div.image-grid-item-icon {
-  background: rgba(252,60,68,0.07) !important;
-  border: 1px solid rgba(252,60,68,0.16) !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: none !important;
   border-radius: 12px !important;
-  transition: background .18s ease, border-color .18s ease !important;
+  transition: background .18s ease !important;
 }
 .msk-is-non-touch .image-grid-item:hover div.image-grid-item-icon {
-  background: rgba(252,60,68,0.13) !important;
-  border-color: rgba(252,60,68,0.4) !important;
+  background: rgba(255,255,255,0.09) !important;
 }
-.image-grid-item-icon.image-grid-item-img { color: var(--primary-color) !important; }
-/* text/action tiles */
+/* text/action tiles — flat neutral */
 .text-grid-item > div:not(.image-grid-btn) {
-  background-color: rgba(252,60,68,0.07) !important;
-  border: 1px solid rgba(252,60,68,0.16) !important;
+  background-color: rgba(255,255,255,0.05) !important;
+  border: none !important;
   border-radius: 12px !important;
 }
 .msk-is-non-touch .text-grid-item > div:not(.image-grid-btn):hover {
-  background-color: rgba(252,60,68,0.14) !important;
-  border-color: rgba(252,60,68,0.4) !important;
+  background-color: rgba(255,255,255,0.09) !important;
 }
 
 /* ── 10. SECTION HEADERS — big editorial Apple shelves ───────
@@ -288,12 +289,12 @@ div.image-grid-item-icon {
 .v-chip { border-radius: 9px !important; }
 
 /* ── 12. DIALOGS, MENUS & FULLSCREEN SETTINGS ───────────────  */
-/* Non-fullscreen popups: rounded frosted card */
+/* Non-fullscreen popups: rounded flat solid card */
 .v-dialog:not(.v-dialog--fullscreen) > .v-card,
 .v-dialog:not(.v-dialog--fullscreen) .v-card {
-  background: rgba(26,26,30,0.96) !important;
-  backdrop-filter: blur(40px) saturate(1.8) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(1.8) !important;
+  background: #1c1c1e !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-radius: 18px !important;
   border: 1px solid rgba(255,255,255,0.09) !important;
 }
@@ -335,20 +336,20 @@ div.image-grid-item-icon {
   padding: 12px 16px 4px !important;
 }
 
-/* dropdown menus / selects */
+/* dropdown / context menus (e.g. the now-playing 3-dot menu) — flat solid */
 .v-menu__content, .v-select-list {
-  background: rgba(26,26,30,0.97) !important;
-  backdrop-filter: blur(32px) !important;
-  -webkit-backdrop-filter: blur(32px) !important;
+  background: #1c1c1e !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-radius: 14px !important;
   border: 1px solid rgba(255,255,255,0.09) !important;
   box-shadow: 0 10px 40px rgba(0,0,0,0.65) !important;
 }
 /* toast / snack */
 .v-snack__wrapper {
-  background: rgba(38,38,44,0.97) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
+  background: #262629 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-radius: 14px !important;
 }
 

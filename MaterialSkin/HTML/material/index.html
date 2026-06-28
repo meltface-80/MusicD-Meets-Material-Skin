@@ -50,7 +50,7 @@
   }
   print("  <link href=\"html/css/covers/round.min.css?r=$version\" rel=\"stylesheet\" id=\"covercss\">\n");
   print("  <link href=\"html/css/variant/standard.min.css?r=$version\" rel=\"stylesheet\" id=\"variantcss\">\n");
-  print("  <link href=\"html/css/musicd-np.css?r=6.4.2-md6.0\" rel=\"stylesheet\" id=\"musicdcss\">\n");
+  print("  <link href=\"html/css/musicd-np.css?r=6.4.2-md7.0\" rel=\"stylesheet\" id=\"musicdcss\">\n");
   print("  <title>${windowTitle}</title>\n");
   print("  <meta name=\"apple-mobile-web-app-title\" content=\"${windowTitle}\">\n");
   print("  <meta name=\"application-name\" content=\"${windowTitle}\">\n");
@@ -212,7 +212,7 @@
   print("const LMS_3RDPARTY_HOME_EXTRA=$homeExtra;");
   print("</script>\n");
   [% END %]
-  <script src="html/js/material.min.js?r=6.4.2-md3.2"></script>
+  <script src="html/js/material.min.js?r=6.4.2-md3.3"></script>
   [% PERL %]
   my $ua=$stash->get("userAgent");
   my $query=$stash->get("url_query");
@@ -225,7 +225,7 @@
   <script type="text/javascript">
    function loadOtherFiles() {
      var script = document.createElement("script");
-     script.src = "html/js/material-deferred.min.js?r=6.4.2-md3.6";
+     script.src = "html/js/material-deferred.min.js?r=6.4.2-md3.7";
      document.body.appendChild(script);
      var link = document.createElement("link");
      link.href = "html/css/lib-deferred.min.css?r=6.4.2";
