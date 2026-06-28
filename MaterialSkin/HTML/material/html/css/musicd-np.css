@@ -1,12 +1,13 @@
 /* ============================================================
-   MusicD — Apple Music UI redesign  (v1.0.18)
+   MusicD — Apple Music UI redesign  (v1.0.19)
    A heavy CSS reskin of LMS-Material toward the iOS Apple Music
    app: big editorial section headers, rounded album art, a
    floating now-playing card, SF Pro type, and the signature red
-   accent. ONE flat soft dark-grey surface (#1c1c1e) is used
-   throughout — no maroon wash, no harsh pure-black — for a clean,
-   even, low-contrast look. Red is used only as an accent, never
-   as a background wash.
+   accent. "Liquid Glass" finish — translucent softer-grey
+   (#232325 base / rgba(44,44,46) glass) with backdrop blur +
+   saturate on toolbars, bottom bar, mini-player, menus, dialogs
+   and snackbar. Fullscreen settings stay solid (nothing behind to
+   blur). Red is used only as an accent, never as a background.
 
    Selectors verified against style.min.css / mobile.min.css /
    lib.min.css. Loaded last in the cascade; wins with !important.
@@ -34,16 +35,16 @@
      maroon. We pin --background-color directly AND neutralise
      --tint-color, so every surface stays flat grey in either
      variant. Every Material surface token is forced to match.   */
-  --bgnd:                       #1c1c1e;
-  --std-background-color:       #1c1c1e !important;
-  --background-color:           #1c1c1e !important;
-  --std-popup-background-color: #1c1c1e !important;
-  --browse-header-color:        #1c1c1e !important;
-  --tint-color:                 #1c1c1e !important;
-  --top-toolbar-color:          #1c1c1e !important;
-  --sub-toolbar-color:          #1c1c1e !important;
-  --bottom-toolbar-color:       #1c1c1e !important;
-  --dialog-toolbar-color:       #1c1c1e !important;
+  --bgnd:                       #232325;
+  --std-background-color:       #232325 !important;
+  --background-color:           #232325 !important;
+  --std-popup-background-color: #232325 !important;
+  --browse-header-color:        #232325 !important;
+  --tint-color:                 #232325 !important;
+  --top-toolbar-color:          #232325 !important;
+  --sub-toolbar-color:          #232325 !important;
+  --bottom-toolbar-color:       #232325 !important;
+  --dialog-toolbar-color:       #232325 !important;
 
   /* Bottom-nav tab colours */
   --active-nav-btn-color:      #fc3c44 !important;
@@ -66,14 +67,17 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
                'SF Pro Text', 'Helvetica Neue', Arial, sans-serif !important;
 }
 
-/* ── 2. TOP TOOLBAR — flat solid ────────────────────────────
-   Flat near-black, no blur/saturate (saturate over the red theme
-   bg was producing a murky maroon wash). Clean, even colour.     */
+/* ── 2. TOP TOOLBAR — Apple liquid glass ────────────────────
+   Translucent softer-grey + backdrop blur/saturate. Safe now the
+   red --tint-color is neutralised (no maroon). On iOS the toolbar
+   is in-flow (little behind it), so this reads as a frosted panel
+   rather than fully see-through — kept at 0.72 alpha so it never
+   looks broken.                                                  */
 .lms-toolbar, .v-toolbar {
-  background: #1c1c1e !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  background: rgba(44,44,46,0.72) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
   box-shadow: none !important;
 }
 .v-toolbar__title {
@@ -83,23 +87,33 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   color: #ffffff !important;
 }
 
-/* ── 3. SUB-TOOLBAR — flat solid ────────────────────────────  */
+/* ── 3. SUB-TOOLBAR — liquid glass ──────────────────────────  */
 .subtoolbar {
-  background: #1c1c1e !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  background: rgba(44,44,46,0.72) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
 }
+/* inner cover that paints --background-color would block the blur */
+.subtoolbar-cover { background: transparent !important; }
 
 /* ── 4. BOTTOM NAV / TAB BAR — flat solid, red active ───────
    Active colour is set via --active-nav-btn-color (§0). We also
    target the .active-nav / .inactive-nav classes Material uses on
    mobile (NOT Vuetify's .v-btn--active).                         */
+/* The visible bottom-bar colour is painted by .lms-footer (the nav
+   itself is transparent in the base). Glass the footer; keep the
+   nav transparent so it doesn't double-paint over the blur.       */
+.lms-footer {
+  background: rgba(44,44,46,0.72) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
 .lms-bottom-nav, .v-bottom-nav {
-  background: #1c1c1e !important;
+  background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  border-top: 1px solid rgba(255,255,255,0.07) !important;
   box-shadow: none !important;
 }
 .active-nav div i, .active-nav div span { color: #fc3c44 !important; opacity: 1 !important; }
@@ -121,12 +135,13 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   left: 8px !important;
   right: 8px !important;
   width: auto !important;
-  border-radius: 16px !important;
+  height: 64px !important;            /* taller; set directly — JS writes --mobile-npbar-height inline */
+  border-radius: 18px !important;
   bottom: calc(var(--bottom-toolbar-height) + 6px) !important;
-  background: #1c1c1e !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 0.5px solid rgba(255,255,255,0.10) !important;
+  background: rgba(44,44,46,0.72) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+  border: 0.5px solid rgba(255,255,255,0.12) !important;
   box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4) !important;
   overflow: hidden !important;
 }
@@ -138,16 +153,30 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
   bottom: calc(var(--bottom-toolbar-height) + 6px) !important;
   height: 2px !important;
 }
-/* artwork: base left:2px → shift to 10px (8px inset + 2) */
+/* card insets: shift artwork (base left:2px) and play button
+   (base right:6px) in to match the 8px card inset.               */
 .np-bar-mob-thick .np-bar-image,
 .np-bar-mob-nav .np-bar-image { left: 10px !important; }
-/* play button: base right:6px → shift to 14px (8px inset + 6) */
 .np-bar-mob-thick .np-playpause,
 .np-bar-mob-nav .np-playpause { right: 14px !important; }
-/* track details: base left:50px / width:100vw-92px → inset both sides */
+
+/* Taller bar (64px): grow artwork to 52px and re-centre each
+   independently-fixed child on the new card centre. Each child's
+   `bottom` is calc'd from --bottom-toolbar-height, NOT the bar
+   height, so they must be nudged up manually. (thick = standard
+   mobile mini-player.)                                            */
+.np-bar-mob-thick .np-bar-image {
+  height: 52px !important; width: 52px !important;
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 12px) !important;
+}
+.np-bar-mob-thick .np-bar-image .np-cover { height: 50px !important; width: 50px !important; }
+.np-bar-mob-thick .np-playpause {
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 22px) !important;
+}
 .np-bar-mob-thick .np-bar-details {
-  left: 58px !important;
-  width: calc(100vw - 108px) !important;
+  left: 68px !important;                       /* clear the larger 52px art */
+  width: calc(100vw - 118px) !important;
+  bottom: calc(var(--bottom-toolbar-height) + var(--bottom-np-pad) + 16px) !important;
 }
 .np-bar-mob-nav .np-bar-details {
   left: 70px !important;
@@ -155,6 +184,15 @@ body, .v-application, .v-toolbar__title, .v-list__tile__title,
 }
 /* cover pill + text inside the card */
 .np-bar-image .np-cover { border-radius: 8px !important; box-shadow: 0 3px 12px rgba(0,0,0,0.6) !important; }
+
+/* Remove the non-functional queue toggle from the mini-bar (scoped
+   to .np-bar so the desktop toolbar / NP-full queue stay intact).  */
+.np-bar .np-bar-queue { display: none !important; }
+
+/* Taller floating card overlaps a little more content than the
+   layout reserves (reserve uses the JS-set 48px, bar is now 64px);
+   pad the scroll lists so the last row clears the card.            */
+.lms-list, .lms-image-grid, .lms-jumplist { padding-bottom: 22px !important; }
 .np-bar .v-list__tile__title, .np-bar-details .np-bar-title {
   color: #ffffff !important; font-weight: 600 !important; font-size: 14px !important;
 }
@@ -306,15 +344,19 @@ div.image-grid-item-icon {
 .v-chip { border-radius: 9px !important; }
 
 /* ── 12. DIALOGS, MENUS & FULLSCREEN SETTINGS ───────────────  */
-/* Non-fullscreen popups: rounded flat solid card */
+/* Non-fullscreen popups float over real content → true glass.
+   Inner .v-sheet/.v-list paint --background-color opaquely, which
+   would block the blur, so force them transparent.                */
 .v-dialog:not(.v-dialog--fullscreen) > .v-card,
 .v-dialog:not(.v-dialog--fullscreen) .v-card {
-  background: #1c1c1e !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(44,44,46,0.62) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
   border-radius: 18px !important;
-  border: 1px solid rgba(255,255,255,0.09) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
 }
+.v-dialog:not(.v-dialog--fullscreen) .v-sheet,
+.v-dialog:not(.v-dialog--fullscreen) .v-card .v-list { background: transparent !important; }
 .v-dialog .v-card__title { font-weight: 700 !important; font-size: 18px !important; color: #ffffff !important; letter-spacing: -0.02em !important; }
 .v-dialog .v-card__text { color: rgba(255,255,255,0.65) !important; }
 
@@ -326,8 +368,8 @@ div.image-grid-item-icon {
 .v-dialog--fullscreen > .v-card,
 .v-dialog--fullscreen .v-card,
 .v-dialog--fullscreen .v-sheet {
-  background: #1c1c1e !important;
-  background-color: #1c1c1e !important;
+  background: #232325 !important;
+  background-color: #232325 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border: none !important;
@@ -339,10 +381,11 @@ div.image-grid-item-icon {
   margin: 0 !important;
 }
 .v-dialog--fullscreen { top: 0 !important; left: 0 !important; }
-/* dialog toolbar: solid, no frosted red tint */
+/* dialog toolbar: solid grey (fullscreen covers everything → no
+   meaningful backdrop to blur; glass would just look muddy).      */
 .v-dialog--fullscreen .dialog-toolbar,
 .v-dialog--fullscreen .v-toolbar {
-  background: #1c1c1e !important;
+  background: #232325 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -353,25 +396,34 @@ div.image-grid-item-icon {
   padding: 12px 16px 4px !important;
 }
 
-/* dropdown / context menus (e.g. the now-playing 3-dot menu) — flat solid */
+/* dropdown / context menus (e.g. the now-playing 3-dot menu) — glass.
+   These float over real content, so the blur genuinely shows.      */
 .v-menu__content, .v-select-list {
-  background: #1c1c1e !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(44,44,46,0.62) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
   border-radius: 14px !important;
-  border: 1px solid rgba(255,255,255,0.09) !important;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.65) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.55) !important;
 }
-/* toast / snack */
+/* CRITICAL: the inner .v-list/.v-sheet/.v-card paint --popup-background
+   opaquely ON TOP of the glass and would hide the blur — make them
+   transparent so the frosted effect shows through.                 */
+.v-menu__content .v-list,
+.v-menu__content .v-sheet,
+.v-menu__content .v-card,
+.v-select-list .v-list { background: transparent !important; }
+
+/* toast / snack — glass */
 .v-snack__wrapper {
-  background: #262629 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(44,44,46,0.62) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
   border-radius: 14px !important;
 }
 
 /* ── 13. NAV DRAWER ─────────────────────────────────────────  */
-.v-navigation-drawer { background-color: #1c1c1e !important; overflow-y: auto !important; }
+.v-navigation-drawer { background-color: #232325 !important; overflow-y: auto !important; }
 .v-navigation-drawer .v-subheader {
   color: #fc3c44 !important;
   text-transform: uppercase !important;
