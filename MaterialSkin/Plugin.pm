@@ -582,23 +582,6 @@ sub signalHomeExtraUpdate {
     Slim::Control::Request::notifyFromArray(undef, ['material-skin', 'notification', 'internal', 'refresh-home']);
 }
 
-#sub _checkPlayQueue {
-#    my $request = shift;
-#    if (!$prefs->get('playShuffle')) {
-#        return;
-#    }
-#    main::INFOLOG && $log->is_info && $log->info("Check queue");
-#    my $client = $request->client();
-#    if (0==Slim::Player::Playlist::count($client) && 0!=Slim::Player::Playlist::shuffle($client)) {
-#        Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2.00, sub {
-#            if (0==Slim::Player::Playlist::count($client) && 0!=Slim::Player::Playlist::shuffle($client)) {
-#                main::INFOLOG && $log->is_info && $log->info("Set queue to not shuffled");
-#                $client->execute(['playlist', 'shuffle', 0]);
-#            }
-#        });
-#    }
-#}
-
 sub _playQueueCleared {
     my $request = shift;
     my $client  = $request->client();
@@ -2318,11 +2301,6 @@ sub _isRadio {
 sub _cliCommandQuery {
     my $request = shift;
 
-    # check this is the correct query.
-    #if ($request->isNotCommand([['material-skin-query']])) {
-    #    $request->setStatusBadDispatch();
-    #    return;
-    #}
     my $cmd = $request->getParam('_cmd');
     if ($request->paramUndefinedOrNotOneOf($cmd, ['radios', 'playlists']) ) {
         $request->setStatusBadParams();
@@ -2365,13 +2343,8 @@ sub _cliCommandQuery {
         my @keys = ("id", "playlist", "textkey", "extid", "url");
         my $plreq = Slim::Control::Request::executeRequest(undef, \@plcmd);
         my $cnt = 0;
-        #my $imageDir = Slim::Utils::Prefs::dir() . "/material-skin/playlists";
-        #my $imageDirExists = -e $imageDir;
 
         foreach my $playlist ( @{ $plreq->getResult('playlists_loop') || [] } ) {
-            #my $name = undef;
-            #my $id = undef;
-
             foreach my $key (@keys) {
                 my $val = $playlist->{$key};
                 if (!defined $val) {
@@ -2385,49 +2358,8 @@ sub _cliCommandQuery {
                         $request->addResultLoop("playlists_loop", $cnt, "mtime", ${mtime});
                     }
                 }
-                #elsif ($key eq "id" && !_startsWith("${val}", "file:")) {
-                #    $id = $val;
-                #} elsif ($key eq "playlist") {
-                #    $name = $val;
-                #}
             }
 
-            #if (defined $id) { # This is a playlist, not folder, so look for cover
-            #    my $haveUserImage = 0;
-            #    if ($name && $imageDirExists) {
-            #        my $fileName = lc($name);
-            #        $fileName =~ s/[^a-z_0-9]//ig;
-            #        if (-e "${imageDir}/${fileName}.png" || -e "${imageDir}/${fileName}.jpg") {
-            #            $haveUserImage = 1;
-            #        }
-            #    }
-            #    if (!$haveUserImage) {
-            #        my $treq = Slim::Control::Request::executeRequest(undef, ["playlists", "tracks", 0, PLAYLIST_IMAGE_TRACKS, "tags:cK", "playlist_id:${id}"] );
-            #        #my @images = ();
-            #        foreach my $track ( @{ $treq->getResult('playlisttracks_loop') || [] } ) {
-            #            my $image = undef;
-            #            if ($track->{'artwork_url'}) {
-            #                $image = $track->{'artwork_url'};
-            #                if (_startsWith($image, "http:") || _startsWith($image, "https:")) {
-            #                    $image = "/imageproxy/" . URI::Escape::uri_escape_utf8($image) . "/image_300x300_f";
-            #                }
-            #            } elsif ($track->{'coverid'}) {
-            #                $image = "/music/" . $track->{'coverid'} . "/cover_300x300_f";
-            #            }
-            #            if ($image) {
-            #                $request->addResultLoop("playlists_loop", $cnt, "image", $image);
-            #                last;
-            #                #push(@images, $image);
-            #                #if (scalar(@images)>2) {
-            #                #    last;
-            #                #}
-            #            }
-            #        }
-            #        #if (scalar(@images)>0) {
-            #        #    $request->addResultLoop("playlists_loop", $cnt, "images", \@images);
-            #        #}
-            #    }
-            #}
             $cnt+=1;
         }
         $request->addResult("count", $plreq->getResult('count'));
@@ -2454,7 +2386,7 @@ sub _traverseFavoritesTree {
                 $cnt++;
             } elsif (ref($item->{items}) eq 'ARRAY' && scalar(@{$item->{items}}) > 0) {
                 # Dive into child items
-                $cnt = _traverseFavoritesTree->($request, $item, $cnt);
+                $cnt = _traverseFavoritesTree($request, $item, $cnt);
             }
         }
 
@@ -3163,7 +3095,6 @@ sub _manifestHandler {
     my $filePath = dirname(__FILE__) . "/HTML/material/html/material.webmanifest";
     my $manifest = read_file($filePath);
     my $query = $request->uri()->query();
-    my $iOS = index($ua, 'iPad') != -1 || index($ua, 'iPhone') != -1 || index($ua, 'SafariViewService') != -1 || index($ua, 'MobileSafari') != -1 || (index($ua, 'Macintosh') != -1 && index($ua, '(KHTML, like Gecko) Version') != -1);
 
     if (defined $request->{_headers}->{'referer'}) {
         # See if we have any query params, if so add to start_url...
@@ -3176,16 +3107,8 @@ sub _manifestHandler {
     }
 
     my $themeColor = "000000";
-    # Make manifest colours match platform default theme...
-    #if (index($ua, 'Android') != -1) {
-    #    $themeColor="000000";
-    #} elsif (index($ua, 'iPad') != -1 || index($ua, 'iPhone') != -1 || index($ua, 'MobileSafari') != -1) { # || (index($ua, 'Macintosh') != -1 && index($ua, '(KHTML, like Gecko) Version') != -1)) {
-    #    $themeColor="ffffff";
-    #} els
     if (index($ua, 'Linux') != -1) {
         $themeColor="2d2d2d";
-    #} elsif (index($ua, 'Win') != -1) {
-    #    $themeColor="000000";
     } elsif (index($ua, 'Mac') != -1) {
         $themeColor="353537";
     }
@@ -3230,7 +3153,7 @@ sub _userThemeHandler {
     my $pos = index($request->uri->path, "/dark/");
     if ($pos<0) {
         $pos = index($request->uri->path, "/light/");
-        my $dark = 0;
+        $dark = 0;
     }
     my $theme = substr($request->uri->path, $pos);
     my $filePath = Slim::Utils::Prefs::dir() . "/material-skin/themes" . $theme . ".css";
@@ -3279,7 +3202,7 @@ sub _downloadHandler {
 
         if ($start > 0) {
             $start += 3;
-            $id = "#" . substr($uri, $start+3);
+            $id = substr($uri, $start);
         }
     }
 
@@ -3367,7 +3290,7 @@ sub _genreHandler {
 sub _playlistHandler {
     my ( $httpClient, $response ) = @_;
     my $playlistName = uri_unescape(basename($response->request->uri->path));
-    if ($playlistName && $playlistName =~/$&full=1$/) {
+    if ($playlistName && $playlistName =~/&full=1$/) {
         $playlistName = substr($playlistName, 0, -7);
     }
 

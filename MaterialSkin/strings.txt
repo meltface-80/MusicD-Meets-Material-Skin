@@ -400,7 +400,6 @@ PLUGIN_MATERIAL_SKIN_FIXED_VOL_B_SPECIAL
 	ZH_CN	关闭音量调节栏，隐藏音量
 	HU	A hangerő csúszka letiltása és a hangerő érték elrejtése
 	SV	Avaktivera volymreglaget och dölj ljudnivån
-	SV	Avaktivera volymreglaget och dölj ljudnivån
 
 PLUGIN_MATERIAL_SKIN_FIXED_VOL_C_HIDE
 	CS	Skrýt ovládání hlasitosti
