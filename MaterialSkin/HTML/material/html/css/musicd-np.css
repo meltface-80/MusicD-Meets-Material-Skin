@@ -1,183 +1,260 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
 
 /* ============================================================
-   MusicD — Apple Music visual theme (v1.0.13)
-   Overrides Material toward an Apple Music aesthetic:
-   blurred album-art background, system UI sans-serif, red accent.
-   Injected last in the cascade; scoped where possible so the
-   mini-bar and other views are untouched.
+   MusicD — Apple Music full UI/UX theme  (v1.0.14)
+   Rewrites the visual layer of Material toward Apple Music:
+   system UI fonts, frosted glass surfaces, red accent, cinematic
+   Now Playing, clean list/grid typography throughout.
+   Injected last in the cascade; all structural JS/Perl untouched.
    ============================================================ */
 
-/* --- Apple Music: blurred album-art fills the full NP view --- */
+/* ── 0. FORCE RED THEME VARIABLES ───────────────────────────
+   Material's setColor() writes --primary-color / --highlight-rgb
+   as inline styles on <html>. Inline beats a bare rule, but not
+   !important — so we lock the whole UI to Apple Music red here.  */
+:root {
+  --primary-color:         #fc3c44 !important;
+  --accent-color:          #ff6b6b !important;
+  --highlight-rgb:         252,60,68 !important;
+  --default-primary-color: #fc3c44 !important;
+  --default-accent-color:  #ff6b6b !important;
+  --default-highlight-rgb: 252,60,68 !important;
+
+  /* Surface tokens */
+  --std-background-color:       #0d0d0f !important;
+  --std-popup-background-color: #1c1c1e !important;
+  --browse-header-color:        #0d0d0f !important;
+
+  /* Grid density — 3 columns on phones */
+  --min-grid-width: 118px;
+}
+
+/* ── 1. SYSTEM FONT EVERYWHERE ───────────────────────────────
+   On Apple devices this resolves to SF Pro Text / Display.
+   Android gets Roboto; Windows/Linux fall back to their system
+   sans-serif. Manrope is retained only for the share-card canvas. */
+body,
+.v-application,
+.v-toolbar__title,
+.v-list__tile__title,
+.v-list__tile__sub-title,
+.v-subheader,
+.v-label,
+.v-btn,
+.v-tab,
+.v-card__title,
+.v-card__text,
+.v-chip,
+.v-select__selection,
+.v-text-field input,
+.v-snack__content,
+.np-tech, .np-pos, .np-duration {
+  font-family: -apple-system, BlinkMacSystemFont,
+               'SF Pro Text', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* ── 2. FROSTED GLASS — TOP TOOLBAR ─────────────────────────
+   Semi-transparent so content blurs beneath it while scrolling.  */
+.lms-toolbar,
+.v-toolbar {
+  background: rgba(10,10,12,0.82) !important;
+  backdrop-filter: blur(24px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  box-shadow: none !important;
+}
+.v-toolbar__title {
+  font-weight: 600 !important;
+  font-size: 17px !important;
+  letter-spacing: -0.01em !important;
+  color: #ffffff !important;
+}
+
+/* ── 3. FROSTED GLASS — SUB-TOOLBAR (browse tabs / search) ── */
+.subtoolbar {
+  background: rgba(10,10,12,0.82) !important;
+  backdrop-filter: blur(24px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* ── 4. FROSTED GLASS — BOTTOM NAVIGATION BAR ───────────────  */
+.lms-bottom-nav,
+.v-bottom-nav {
+  background: rgba(16,16,18,0.88) !important;
+  backdrop-filter: blur(28px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.8) !important;
+  border-top: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow: none !important;
+}
+/* Active tab: Apple red */
+.lms-bottom-nav-button .v-btn--active i,
+.v-bottom-nav .v-btn--active i { color: #fc3c44 !important; }
+/* Inactive tabs: muted white */
+.lms-bottom-nav-button .v-btn:not(.v-btn--active) i,
+.v-bottom-nav .v-btn:not(.v-btn--active) i { color: rgba(255,255,255,0.48) !important; }
+/* Active-tab label text */
+.lms-bottom-nav-button .v-btn--active .v-btn__content span,
+.v-bottom-nav .v-btn--active .v-btn__content span { color: #fc3c44 !important; }
+.lms-bottom-nav-button .v-btn:not(.v-btn--active) .v-btn__content span,
+.v-bottom-nav .v-btn:not(.v-btn--active) .v-btn__content span { color: rgba(255,255,255,0.48) !important; }
+
+/* ── 5. FROSTED GLASS — MINI-PLAYER (np-bar) ────────────────
+   The strip above the bottom nav that shows current track.       */
+.np-bar {
+  background: rgba(22,22,24,0.90) !important;
+  backdrop-filter: blur(28px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.8) !important;
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 -6px 28px rgba(0,0,0,0.42) !important;
+}
+/* Mini-player artwork */
+.np-bar .np-cover {
+  border-radius: 7px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.55) !important;
+}
+/* Mini-player track title */
+.np-bar .v-list__tile__title {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+/* Mini-player artist */
+.np-bar .v-list__tile__sub-title {
+  color: rgba(255,255,255,0.52) !important;
+  font-size: 13px !important;
+}
+/* Mini-player progress line (stays red via --primary-color) */
+.np-bar-slider { height: 2px !important; }
+
+/* ── 6. NOW PLAYING — FULL SCREEN ────────────────────────────
+   Album-art blur background (Apple Music's signature NP look).
+   .np-bgnd is the absolutely-positioned backdrop; its inner div
+   holds the cover as a background-image. We darken + blur it.
+   .np-full itself is transparent so the blur shows through.      */
 .np-full { background-color: rgba(0,0,0,0) !important; }
-.np-full .np-bgnd { display:block !important; opacity:1 !important; }
+.np-full .np-bgnd {
+  display: block !important;
+  opacity: 1 !important;
+  background-color: #0d0d0f !important; /* fallback when no art */
+}
 .np-full .np-bgnd > div,
 .np-full .np-bgnd div:first-of-type {
   filter: saturate(2.5) blur(42px) brightness(0.28) !important;
-  display:block !important; opacity:1 !important;
+  display: block !important;
+  opacity: 1 !important;
 }
 
-/* --- Cover: 12px rounding + cinematic shadow --- */
+/* Cover: cinematic rounding + deep shadow */
 .np-full .np-image .np-cover {
-  border-radius:12px !important;
+  border-radius: 12px !important;
   box-shadow: 0 20px 60px rgba(0,0,0,0.80) !important;
 }
 
-/* --- Title: system UI, bold, pure white --- */
+/* Title: system UI, bold, pure white */
 .np-full .np-title {
-  font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
-  font-size:29px !important;
-  font-weight:700 !important;
-  letter-spacing:-0.02em !important;
-  line-height:1.14 !important;
-  color:#ffffff !important;
-  margin:2px 0 7px !important;
+  font-family: -apple-system, BlinkMacSystemFont,
+               'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 29px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.14 !important;
+  color: #ffffff !important;
+  margin: 2px 0 7px !important;
 }
 
-/* --- Artist / album line: system UI, muted white --- */
+/* Artist / album line */
 .np-full .np-portrait-track-info .np-text,
 .np-full .np-text.subtext {
-  font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
-  font-size:16px !important;
-  color:rgba(255,255,255,0.62) !important;
-  line-height:1.45 !important;
+  font-family: -apple-system, BlinkMacSystemFont,
+               'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 16px !important;
+  color: rgba(255,255,255,0.62) !important;
+  line-height: 1.45 !important;
 }
 
-/* --- Format / technical line: faint, small, lightly tracked --- */
+/* Format / technical info */
 .np-full .np-tech {
-  font-size:12.5px !important;
-  color:rgba(255,255,255,0.36) !important;
-  letter-spacing:.02em !important;
+  font-size: 12.5px !important;
+  color: rgba(255,255,255,0.36) !important;
+  letter-spacing: .02em !important;
 }
 
-/* --- Seek: track background, time labels --- */
-.np-full .np-slider:not(.np-bar-slider) { background-color:rgba(255,255,255,0.18) !important; }
+/* Seek track background & time labels */
+.np-full .np-slider:not(.np-bar-slider) { background-color: rgba(255,255,255,0.18) !important; }
 .np-full .np-pos, .np-full .np-duration {
-  color:rgba(255,255,255,0.42) !important;
-  font-variant-numeric:tabular-nums !important;
+  color: rgba(255,255,255,0.42) !important;
+  font-variant-numeric: tabular-nums !important;
 }
 
-/* --- Play button: Apple red --- */
+/* Play button: Apple red */
 .np-full .np-playpause i,
-.np-full .np-playpause div i { color:#fc3c44 !important; }
+.np-full .np-playpause div i { color: #fc3c44 !important; }
 
-/* --- Prev / next / shuffle / repeat: white so red play leads --- */
+/* Prev / next / shuffle / repeat: white */
 .np-full .np-controls .v-btn:not(.np-playpause) i,
-.np-full .np-controls-wide .v-btn:not(.np-playpause) i { color:rgba(255,255,255,0.80) !important; }
+.np-full .np-controls-wide .v-btn:not(.np-playpause) i { color: rgba(255,255,255,0.80) !important; }
 
-
-/* ============================================================
-   MusicD — now-playing spacing + side-menu (nav drawer)   md1.10
-   ============================================================ */
-
-/* (1) Now Playing: lift the seek bar away from the transport controls */
+/* NP spacing */
 .np-playback { margin-top: 24px !important; }
 
-/* (2) Nav drawer — Apple red theming */
-.v-navigation-drawer { background-color:#0d0d0f !important; }
-.v-navigation-drawer .v-subheader {
-  color:#fc3c44 !important;
-  text-transform:uppercase;
-  letter-spacing:.13em;
-  font-weight:600 !important;
-  font-size:11px !important;
-  opacity:1 !important;
-  height:auto !important;
-  padding-top:16px !important;
-  padding-bottom:4px !important;
-}
-.v-navigation-drawer .nd-header { border-bottom:1px solid rgba(252,60,68,.22) !important; }
-.v-navigation-drawer .v-divider { border-color:rgba(252,60,68,.16) !important; }
-
-/* (2) Kill the big middle gap. The real cause: .nd-main (id #nd-list), the
-       player-list wrapper, is hard-set to height:100% (full drawer height),
-       so its internal flex spacer fills everything below the list and shoves
-       Settings/Shortcuts to the bottom. Let it be content-height instead. */
-#nd-list, .nd-main { height:auto !important; }
-.v-navigation-drawer .spacer { display:none !important; }
-.v-navigation-drawer > div { flex:0 0 auto !important; }
-
-/* (2) Reorder: sink the Shortcuts block below Settings. The drawer is a
-       flex column, and .nd-shortcuts is unique to the Shortcuts section
-       (Settings renders as a labelled list), so :has() can target it. */
-.v-navigation-drawer > div:has(.nd-shortcuts) { order:10 !important; }
-
-/* (2) Shrink the panel to fit its content (grows down if more shortcuts
-       are added later). Material forces height:var(--100vh)!important via the
-       two-class selector `.theme--dark .v-navigation-drawer`, so we must match
-       that specificity (and musicd-np.css loads last, so we win the tie). */
-.v-navigation-drawer { overflow-y:auto !important; }
-.theme--dark .v-navigation-drawer,
-.theme--light .v-navigation-drawer { height:auto !important; max-height:var(--100vh) !important; }
-
-/* (3) Denser browse grid: 3 columns everywhere. Material hardcodes the grid
-       base in JS (GRID_MIN_WIDTH, lowered to 118 to match) and mirrors it in
-       this CSS var, so both must move together or the layout desyncs. */
-:root { --min-grid-width: 118px; }
-
-/* ============================================================
-   MusicD md2.5 — now-playing seek bar: force red fill
-   (custom slider .value/.buffer + Vuetify track-fill/thumb)
-   ============================================================ */
+/* ── 7. SEEK BAR FILL — ALL INSTANCES ───────────────────────
+   Custom slider (.value/.buffer) + Vuetify track-fill/thumb.    */
 .np-slider .value, .np-bar-slider .value,
 .np-slider .v-slider__track-fill, .np-bar-slider .v-slider__track-fill {
   background-color: var(--primary-color) !important;
 }
 .np-slider .buffer, .np-bar-slider .buffer {
-  background-color: rgba(var(--highlight-rgb), 0.40) !important;
+  background-color: rgba(var(--highlight-rgb), 0.38) !important;
 }
 .np-slider .v-slider__thumb, .np-bar-slider .v-slider__thumb {
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
 }
 
-/* ============================================================
-   MusicD md2.6 — FORCE Apple red theme variables (root-cause fix)
-   Material's setColor() writes --primary-color / --highlight-rgb as
-   INLINE styles on <html>, derived from the saved "color" preference
-   (often blue/lyrion from stock Material). Inline is set WITHOUT
-   !important, so these !important rules win and lock the whole UI to
-   Apple Music red regardless of the stored colour pref.
-   ============================================================ */
-:root {
-  --primary-color: #fc3c44 !important;
-  --accent-color: #ff6b6b !important;
-  --highlight-rgb: 252,60,68 !important;
-  --default-primary-color: #fc3c44 !important;
-  --default-accent-color: #ff6b6b !important;
-  --default-highlight-rgb: 252,60,68 !important;
+/* ── 8. LIST ROWS ────────────────────────────────────────────
+   Apple Music list rows: clean type, subtle separators,
+   less extreme pill-rounding on Vuetify tiles.                  */
+.v-list__tile { border-radius: 8px !important; }
+
+.v-list__tile__title {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+.v-list__tile__sub-title {
+  color: rgba(255,255,255,0.52) !important;
 }
 
-/* ============================================================
-   MusicD md2.7 — settings / dialog / popup surfaces to near-black
-   The active theme sets --std-background-color:#212121 and
-   --std-popup-background-color:#303030. Force to MusicD near-black.
-   ============================================================ */
-:root {
-  --std-background-color: #0d0d0f !important;
-  --std-popup-background-color: #1a1a1c !important;
+/* Subtle row separator */
+.lms-list-item {
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
 }
 
-/* ============================================================
-   MusicD md2.8 — flatten home section-header bands
-   ============================================================ */
-:root {
-  --browse-header-color: #0d0d0f !important;
+/* Playing / active row: red title + icon */
+.v-list__tile--active .v-list__tile__title { color: #fc3c44 !important; }
+.v-list__tile--active i { color: #fc3c44 !important; }
+
+/* Artwork thumbnails in list rows */
+.v-list__tile__avatar img,
+.v-avatar img { border-radius: 6px !important; }
+
+/* ── 9. ALBUM GRID ───────────────────────────────────────────
+   Override round.min.css (9px) → 12px. Deeper shadow.          */
+.image-grid-item-img { border-radius: 12px !important; }
+
+/* Grid tile title */
+.image-grid-item .v-list__tile__title {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: #ffffff !important;
+}
+/* Grid tile subtitle (artist / genre) */
+.image-grid-item .v-list__tile__sub-title {
+  font-size: 12px !important;
+  color: rgba(255,255,255,0.48) !important;
 }
 
-/* ============================================================
-   MusicD md3.1 — Home screen polish
-   Pure restyle of Material's real home classes (no layout fork):
-   section headers, cover tiles, icon tiles, text tiles.
-   Remove this block to revert entirely.
-   ============================================================ */
-
-/* Section headers — hairline rule beneath each block */
-.browse-header .v-list__tile__title,
-.grid-header .v-list__tile__title { letter-spacing:0.03em !important; }
-.browse-header { box-shadow: inset 0 -1px 0 rgba(252,60,68,0.16) !important; }
-
-/* Cover tiles — cinematic depth + lift hover with red ring */
+/* Cover shadows + hover lift */
 .image-grid-item-img:not(.image-grid-item-icon) {
   box-shadow: 0 4px 18px rgba(0,0,0,0.65) !important;
   transition: transform .18s ease, box-shadow .18s ease !important;
@@ -187,7 +264,7 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.72), 0 0 0 2px rgba(252,60,68,0.55) !important;
 }
 
-/* Icon tiles — red-tinted quick-access cards */
+/* Icon tiles (History, 5 Stars …) */
 div.image-grid-item-icon {
   background: rgba(252,60,68,0.06) !important;
   border: 1px solid rgba(252,60,68,0.16) !important;
@@ -198,10 +275,9 @@ div.image-grid-item-icon {
   background: rgba(252,60,68,0.12) !important;
   border-color: rgba(252,60,68,0.40) !important;
 }
-/* Tint font-glyph icons red (SVG-image icons keep their own colour) */
 .image-grid-item-icon.image-grid-item-img { color: var(--primary-color) !important; }
 
-/* Text tiles (genre / action chips) — red-edged pills */
+/* Text tiles (genre / action chips) */
 .text-grid-item > div:not(.image-grid-btn) {
   background-color: rgba(252,60,68,0.07) !important;
   border: 1px solid rgba(252,60,68,0.16) !important;
@@ -212,16 +288,115 @@ div.image-grid-item-icon {
   border-color: rgba(252,60,68,0.40) !important;
 }
 
+/* ── 10. HOME — SECTION HEADERS ─────────────────────────────  */
+.browse-header .v-list__tile__title,
+.grid-header .v-list__tile__title {
+  letter-spacing: 0.03em !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+.browse-header { box-shadow: inset 0 -1px 0 rgba(252,60,68,0.14) !important; }
+
+/* ── 11. BUTTONS ─────────────────────────────────────────────
+   Primary action buttons (Play / Shuffle): Apple-red pill.     */
+.v-btn {
+  letter-spacing: 0 !important;
+  font-weight: 600 !important;
+}
+.v-btn.primary,
+.v-btn.v-btn--contained.primary {
+  background-color: #fc3c44 !important;
+  color: #ffffff !important;
+  border-radius: 22px !important;
+  box-shadow: 0 2px 10px rgba(252,60,68,0.38) !important;
+}
+
+/* ── 12. DIALOGS & MENUS ─────────────────────────────────────
+   Frosted glass surface, generous border-radius.               */
+.v-dialog > .v-card,
+.v-dialog .v-card {
+  background: rgba(28,28,30,0.95) !important;
+  backdrop-filter: blur(32px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(1.8) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+}
+.v-dialog .v-card__title {
+  font-weight: 700 !important;
+  font-size: 17px !important;
+  color: #ffffff !important;
+}
+.v-dialog .v-card__text { color: rgba(255,255,255,0.65) !important; }
+
+/* Dropdown menus / selects */
+.v-menu__content,
+.v-select-list {
+  background: rgba(28,28,30,0.96) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+}
+
+/* Snack / toast messages */
+.v-snack__wrapper {
+  background: rgba(40,40,44,0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 12px !important;
+}
+
+/* ── 13. NAV DRAWER ──────────────────────────────────────────  */
+.v-navigation-drawer { background-color: #0d0d0f !important; }
+.v-navigation-drawer .v-subheader {
+  color: #fc3c44 !important;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  opacity: 1 !important;
+  height: auto !important;
+  padding-top: 16px !important;
+  padding-bottom: 4px !important;
+}
+.v-navigation-drawer .nd-header { border-bottom: 1px solid rgba(252,60,68,.22) !important; }
+.v-navigation-drawer .v-divider { border-color: rgba(252,60,68,.16) !important; }
+
+/* Drawer layout fixes (removes the spacer-gap, reorders shortcuts) */
+#nd-list, .nd-main { height: auto !important; }
+.v-navigation-drawer .spacer { display: none !important; }
+.v-navigation-drawer > div { flex: 0 0 auto !important; }
+.v-navigation-drawer > div:has(.nd-shortcuts) { order: 10 !important; }
+.v-navigation-drawer { overflow-y: auto !important; }
+.theme--dark .v-navigation-drawer,
+.theme--light .v-navigation-drawer { height: auto !important; max-height: var(--100vh) !important; }
+
+/* ── 14. MISC POLISH ─────────────────────────────────────────  */
+/* Dividers: very subtle */
+.v-divider {
+  border-color: rgba(255,255,255,0.06) !important;
+  opacity: 1 !important;
+}
+
+/* Settings / popup backgrounds */
+:root {
+  --std-background-color:       #0d0d0f !important;
+  --std-popup-background-color: #1c1c1e !important;
+}
+
 /* Hide the source emblem on home & browse covers */
 .lms-list .image-grid-item .emblem,
-.lms-image-grid .image-grid-item .emblem { display:none !important; }
+.lms-image-grid .image-grid-item .emblem { display: none !important; }
 
-/* ============================================================
-   Collapsible drawer groups
-   ============================================================ */
-.nd-collapse-header { cursor:pointer !important; user-select:none !important; }
+/* ── 15. COLLAPSIBLE DRAWER GROUPS ──────────────────────────  */
+.nd-collapse-header { cursor: pointer !important; user-select: none !important; }
 .nd-collapse-header:hover { background: rgba(252,60,68,0.06) !important; }
 .nd-collapse-chevron {
-  margin-left:auto !important; font-size:20px !important;
-  color: var(--primary-color) !important; opacity:.85 !important;
+  margin-left: auto !important;
+  font-size: 20px !important;
+  color: var(--primary-color) !important;
+  opacity: .85 !important;
 }

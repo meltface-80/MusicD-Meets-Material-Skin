@@ -6,7 +6,7 @@
   A dark reskin of <a href="https://github.com/CDrummond/lms-material">LMS&nbsp;Material</a> for the Lyrion Music Server &mdash; Apple Music-inspired red accent on near-black, built for late-night listening.
 </p>
 
-<p align="center"><b>Version 1.0.13</b></p>
+<p align="center"><b>Version 1.0.14</b></p>
 https://github.com/meltface-80/MusicD-Meets-Material-Skin/releases/latest
 
 -----
