@@ -3,10 +3,10 @@
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/fc1dd26e-db7f-4e27-8f66-b0ab74db89e3" />
 
 <p align="center">
-  A dark reskin of <a href="https://github.com/CDrummond/lms-material">LMS&nbsp;Material</a> for the Lyrion Music Server &mdash; Apple Music-inspired red accent on near-black, built for late-night listening.
+  A dark, editorial reskin of <a href="https://github.com/CDrummond/lms-material">LMS&nbsp;Material</a> for the Lyrion Music Server &mdash; brass on near-black, built for late-night listening.
 </p>
 
-<p align="center"><b>Version 1.0.16</b></p>
+<p align="center"><b>Version 1.0.11</b></p>
 https://github.com/meltface-80/MusicD-Meets-Material-Skin/releases/latest
 
 -----
